@@ -1,0 +1,36 @@
+{
+    "name": "starboard-with-custom-embeds",
+    "version": "1.0.0",
+    "description": "Hootbot but in typescript",
+    "type": "module",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node dist/src/app.js",
+        "build": "npx tsc",
+        "format": "npx prettier -w ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KMMineCube/starboard-with-custom-embeds.git"
+    },
+    "author": "KMMineCube",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/KMMineCube/starboard-with-custom-embeds/issues"
+    },
+    "homepage": "https://github.com/KMMineCube/starboard-with-custom-embeds#readme",
+    "devDependencies": {
+        "eslint": "^8.27.0",
+        "prettier": "^2.7.1",
+        "typescript": "^4.9.3"
+    },
+    "dependencies": {
+        "discord-api": "^0.0.1",
+        "discord-api-types": "^0.37.18",
+        "discord.js": "^14.6.0"
+    },
+    "engines": {
+        "node": "^18.12.0"
+    }
+}
