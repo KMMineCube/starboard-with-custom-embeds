@@ -11,6 +11,7 @@ import {
 function generic_custom_embed(
     title: string,
     description: string,
+    url: string,
     imageLink: string,
     sender: User,
     color: number | HexColorString,
@@ -26,11 +27,16 @@ function generic_custom_embed(
             {
                 name: 'Sender',
                 value: sender.toString(),
-                inline: false
+                inline: true
             },
             {
-                name: 'Number of Images',
+                name: 'Page',
                 value: `${pageNumber}/${maxPageNumber}`,
+                inline: true
+            },
+            {
+                name: 'Source',
+                value: `[Click here](${url})`,
                 inline: false
             }
         ],)
@@ -45,7 +51,7 @@ function generic_custom_embed(
         const buttons = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
-                    .setCustomId('previous_page')
+                    .setCustomId('prev_page')
                     .setEmoji('⬅️')
                     .setDisabled(pageNumber === 1)
                     .setLabel('Previous Page')
