@@ -70,7 +70,6 @@ client.on('interactionCreate', async (interaction) => {
             // field is in the format "1/5"
             let [currentPage, maxPage] = embed?.fields[1]?.value.split('/').map(str => Number(str)) ?? [1,1];
             const link = embed?.fields[2]?.value.split('](')[1]?.slice(0, -1) ?? '';
-            console.log('link: ', link);
             if (!currentPage) currentPage = 1;
             if (!maxPage) maxPage = 1;  
             if (currentPage < maxPage) {
