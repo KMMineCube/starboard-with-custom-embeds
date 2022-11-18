@@ -8,6 +8,19 @@ import {
     User
 } from 'discord.js';
 
+/**
+ * Creates a custom hootbot embed
+ * @param title
+ * @param description
+ * @param url
+ * @param imageLink
+ * @param sender
+ * @param color
+ * @param addButtons
+ * @param pageNumber
+ * @param maxPageNumber
+ * @returns
+ */
 function generic_custom_embed(
     title: string,
     description: string,
@@ -39,7 +52,7 @@ function generic_custom_embed(
                 value: `[Click here](${url})`,
                 inline: false
             }
-        ],)
+        ])
         .setFooter({
             text:
                 `HootBot v0.0.1 |` +
