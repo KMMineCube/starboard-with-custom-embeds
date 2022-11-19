@@ -11,14 +11,16 @@ async function replaceLinkWithEmbed(message: Message): Promise<void> {
     const content = message.content;
     const channel = message.channel;
 
-    const [userLink, redditLink] = await searchForRedditLink(content);
+    const redditLinks = await searchForRedditLink(content);
 
-    if (redditLink && userLink) {
+    const redditLink = redditLinks.length === 1 ? redditLinks[0] : null;
+
+    if (redditLink) {
         // delete original message
         await message.delete();
         // send reddit link to server
         await channel.send(
-            await composeRedditEmbed(userLink, redditLink, content, message.member?.user)
+            await composeRedditEmbed(redditLink, content, message.member?.user)
         );
     }
 }

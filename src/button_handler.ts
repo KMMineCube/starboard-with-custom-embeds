@@ -73,7 +73,6 @@ async function shiftPage(
         if (type === 'reddit') {
             newEmbed = await composeRedditEmbed(
                 link,
-                link,
                 embed?.description ?? '',
                 interaction.user,
                 direction === 'next' ? currentPage + 1 : currentPage - 1

@@ -1,4 +1,5 @@
 import { BaseMessageOptions, User } from 'discord.js';
+import { notEmpty } from './utilities.js';
 import { generic_custom_embed } from './custom_embeds.js';
 
 /**
@@ -10,7 +11,6 @@ import { generic_custom_embed } from './custom_embeds.js';
  * @returns
  */
 async function composeRedditEmbed(
-    userLink: string,
     redditLink: string,
     message: string,
     sender: User,
@@ -22,9 +22,8 @@ async function composeRedditEmbed(
 
     const mediaData = json[0].data.children[0].data;
 
-    // replace userLink and any trailing characters with '*<link to reddit post>*'
-    const newContent = message.replace(new RegExp(`${userLink}[\S]*`), `*<link to reddit post>*`);
-    // console.log(newContent);
+    // replace any instance of `userLink` and non-whitespace trailing characters with text 'link'
+    const newContent = message.replace(new RegExp(redditLink + '\\S*', 'g'), '*<link>*');
 
     // get number of images in post
     const numImages = mediaData.gallery_data?.items.length ?? 1;
@@ -59,7 +58,6 @@ async function composeRedditEmbed(
 
     //replace &amp; with & in image link
     const imageLinkFixed = imageLink.replace(/&amp;/g, '&');
-    // console.log(imageLinkFixed);
 
     // get reddit post title
     const embed = generic_custom_embed(
@@ -76,30 +74,34 @@ async function composeRedditEmbed(
     return embed;
 }
 
-async function searchForRedditLink(
-    content: string
-): Promise<[string | undefined, string | undefined]> {
-    const userLink =
-        content.match(
-            /(https:\/\/www\.reddit\.com\/r\/[a-zA-Z0-9]+\/comments\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+\/[^\s]*)/
-        ) ??
-        content.match(
-            /(https:\/\/www\.reddit\.com\/r\/[a-zA-Z0-9]+\/comments\/[a-zA-Z0-9]+\/[a-zA-Z0-9_]+)/
-        ) ??
-        content.match(/(https:\/\/redd\.it\/[a-zA-Z0-9]+)/);
-    if(!userLink) return [undefined, undefined];
-    //check if the link is wrapped by <>
-    const wrappedLink = content.match(
-        new RegExp(`<${userLink}>`)
-    );
-    if (wrappedLink) {
-        // console.log('wrapped link');
-        return [undefined, undefined];
-    }
+async function searchForRedditLink(content: string): Promise<string[]> {
+    // search for link and get the link with the character preceding it, if it exists
+    const userLinks =
+        [
+            ...content.matchAll(
+                /(?<=\s|^)https?:\/\/(www\.)?reddit\.com\/r\/\w+\/comments\/\w+\/\w+[^\s]/g
+            )
+        ].map((match) => match[0]) ?? new Array<string>();
 
-    const pureRedditLink = userLink[0].match(/(https:\/\/www\.reddit\.com\/r\/[a-zA-Z0-9]+\/comments\/[a-zA-Z0-9]+\/[a-zA-Z0-9_]+)/);
-    // console.log('user link: ' + userLink[0] + '\nactual link:' + pureRedditLink?.[0]);
-    return [userLink[0], pureRedditLink?.[0]];
+    userLinks.concat(
+        [...content.matchAll(/(?<=\s|^)https?:\/\/(www\.)?redd\.it\/\w+\/?/g)].map(
+            (match) => match[0]
+        ) ?? new Array<string>()
+    );
+
+    if (!userLinks) return [];
+    //check if the link is wrapped by <>
+    userLinks.filter((link) => !(link.startsWith('<') && link.endsWith('>')));
+    const pureRedditLinks = userLinks
+        .map((link) =>
+            link.match(
+                /(https:\/\/www\.reddit\.com\/r\/[a-zA-Z0-9]+\/comments\/[a-zA-Z0-9]+\/[a-zA-Z0-9_]+)/
+            )
+        )
+        .filter(notEmpty)
+        .map((link) => link[0]);
+
+    return pureRedditLinks;
 }
 
 export { composeRedditEmbed, searchForRedditLink };
