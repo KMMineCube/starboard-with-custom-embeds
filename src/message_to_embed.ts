@@ -1,18 +1,5 @@
-import { Collection, Message } from 'discord.js';
-import { composeRedditEmbed, searchForRedditLink } from './reddit_stuff.js';
-import { composeCustomEmbedCallback, searchForLinkCallback } from './utilities.js';
-
-const searchAndEmbedCollection: {
-    type: string;
-    searchFunction: searchForLinkCallback;
-    composeEmbedFunction: composeCustomEmbedCallback;
-}[] = [
-    {
-        type: 'reddit',
-        searchFunction: searchForRedditLink,
-        composeEmbedFunction: composeRedditEmbed
-    }
-];
+import { Message } from 'discord.js';
+import { searchAndEmbedCollection } from './utilities.js';
 
 /**
  * Function to replace a user-sent message that contains a media link with a custom embed
@@ -26,7 +13,7 @@ async function replaceLinkWithEmbed(message: Message): Promise<void> {
 
     const searchResults = await Promise.all(
         searchAndEmbedCollection.map(async (obj) => {
-            const links = await obj.searchFunction(content);
+            const links = await obj.searchFunction(message);
             return { links, obj };
         })
     );
@@ -42,12 +29,17 @@ async function replaceLinkWithEmbed(message: Message): Promise<void> {
     };
 
     if (links && links[0] && obj) {
-        // delete original message
-        await message.delete();
-        // send reddit link to server
-        await channel.send(
-            await obj.composeEmbedFunction(links[0], content, message.member.user)
+        const newEmbed = await obj.composeEmbedFunction(
+            links[0],
+            content,
+            message.member.user
         );
+        if (newEmbed) {
+            // delete original message
+            await message.delete();
+            // send reddit link to server
+            await channel.send(newEmbed);
+        }
     }
 }
 

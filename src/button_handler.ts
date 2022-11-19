@@ -6,8 +6,9 @@ import {
 } from 'discord.js';
 import {
     getLinkFromHootBotEmbed,
-    getPageNumbersFromHootBotEmbed
-} from './link_parsers.js';
+    getPageNumbersFromHootBotEmbed,
+    searchAndEmbedCollection
+} from './utilities.js';
 import { composeRedditEmbed } from './reddit_stuff.js';
 
 /**
@@ -69,15 +70,14 @@ async function shiftPage(
 
     const condition = direction === 'next' ? currentPage < maxPage : currentPage > 1;
     if (condition) {
-        let newEmbed: BaseMessageOptions | undefined;
-        if (type === 'reddit') {
-            newEmbed = await composeRedditEmbed(
+        let newEmbed = await searchAndEmbedCollection
+            .find((obj) => obj.type === type)
+            ?.composeEmbedFunction(
                 link,
                 embed?.description ?? '',
                 interaction.user,
                 direction === 'next' ? currentPage + 1 : currentPage - 1
             );
-        }
         if (newEmbed) {
             await interaction.update(newEmbed);
         }

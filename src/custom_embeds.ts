@@ -25,38 +25,45 @@ function generic_custom_embed(
     title: string,
     description: string,
     url: string,
-    imageLink: string,
+    imageLink: string | null,
     sender: User,
     color: number | HexColorString,
     addButtons: boolean,
-    pageNumber: number,
-    maxPageNumber: number
+    pageNumber: number = 1,
+    maxPageNumber: number = 1
 ): BaseMessageOptions {
     const embed = new EmbedBuilder()
         .setTitle(title)
         .setDescription(description)
         .setImage(imageLink)
-        .addFields([
-            {
-                name: 'Sender',
-                value: sender.toString(),
-                inline: true
-            },
-            {
-                name: 'Page',
-                value: `${pageNumber}/${maxPageNumber}`,
-                inline: true
-            },
-            {
-                name: 'Source',
-                value: `[Click here](${url})`,
-                inline: false
-            }
-        ])
+        .addFields(
+            [
+                {
+                    name: 'Sender',
+                    value: sender.toString(),
+                    inline: true
+                },
+                {
+                    name: 'Source',
+                    value: `[Click here](${url})`,
+                    inline: true
+                }
+            ].concat(
+                maxPageNumber > 1
+                    ? [
+                          {
+                              name: 'Page',
+                              value: `${pageNumber}/${maxPageNumber}`,
+                              inline: false
+                          }
+                      ]
+                    : []
+            )
+        )
         .setFooter({
             text:
-                `HootBot v0.0.1 |` +
-                (addButtons ? ` Page ${pageNumber} of ${maxPageNumber}` : ``)
+                `HootBot v0.0.1` +
+                (addButtons ? ` | Page ${pageNumber} of ${maxPageNumber}` : ``)
         })
         .setColor(color);
 

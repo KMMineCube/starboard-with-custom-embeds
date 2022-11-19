@@ -1,4 +1,4 @@
-import { BaseMessageOptions, User } from 'discord.js';
+import { BaseMessageOptions, Message, User } from 'discord.js';
 import { notEmpty } from './utilities.js';
 import { generic_custom_embed } from './custom_embeds.js';
 
@@ -15,12 +15,12 @@ async function composeRedditEmbed(
     message: string,
     sender: User,
     pageNumber: number = 1
-): Promise<BaseMessageOptions> {
-    const asdf = (await fetch(redditLink + '.json')) as Response;
+): Promise<BaseMessageOptions | undefined> {
+    const jsonData = (await fetch(redditLink + '.json')) as Response;
 
-    const json = (await asdf.json()) as Array<any>;
+    const jsonDataArray = (await jsonData.json()) as Array<any>;
 
-    const mediaData = json[0].data.children[0].data;
+    const mediaData = jsonDataArray[0].data.children[0].data;
 
     // replace any instance of `userLink` and non-whitespace trailing characters with text 'link'
     const newContent = message.replace(new RegExp(redditLink + '\\S*', 'g'), '*<link>*');
@@ -28,16 +28,23 @@ async function composeRedditEmbed(
     // get number of images in post
     const numImages = mediaData.gallery_data?.items.length ?? 1;
 
+    let is_video = mediaData.is_video ?? false;
+
     // get reddit post image
-    let imageLink: string;
+    let imageLink: string | null;
 
     if (pageNumber > numImages) {
         pageNumber = numImages;
     }
 
-    if (numImages === 1) {
+    // if reddit post is a video, get the video link
+    if (is_video) {
+        imageLink = null;
+        // imageLink = mediaData.media.reddit_video.fallback_url;
+        // console.log(imageLink);
+    } else if (numImages === 1) {
         imageLink = mediaData.url_overridden_by_dest;
-    } else {
+    } else if (numImages > 1) {
         // get the 'pageNumber'th image in the gallery
         imageLink =
             mediaData.media_metadata[
@@ -45,19 +52,18 @@ async function composeRedditEmbed(
             ].s.u ??
             mediaData.url_overridden_by_dest ??
             mediaData.url;
+    } else {
+        imageLink = null;
     }
 
-    // if reddit post is a video, get the video link
-    if (mediaData.is_video) {
-        imageLink = mediaData.media.reddit_video.fallback_url;
-    }
+    
     // if reddit post has a gif
     if (mediaData.post_hint === 'rich:video') {
         imageLink = mediaData.media.oembed.thumbnail_url;
     }
 
     //replace &amp; with & in image link
-    const imageLinkFixed = imageLink.replace(/&amp;/g, '&');
+    const imageLinkFixed = imageLink?.replace(/&amp;/g, '&') ?? null;
 
     // get reddit post title
     const embed = generic_custom_embed(
@@ -71,23 +77,24 @@ async function composeRedditEmbed(
         pageNumber,
         numImages
     );
-    return embed;
+    if(imageLink === null) {
+        return undefined;
+    } else {
+        return embed;
+    }
 }
 
-async function searchForRedditLink(content: string): Promise<string[]> {
+async function searchForRedditLink(message: Message | string): Promise<string[]> {
     // search for link and get the link with the character preceding it, if it exists
+    const content = message instanceof Message ? message.content : message;
+
     const userLinks =
         [
             ...content.matchAll(
                 /(?<=\s|^)https?:\/\/(www\.)?reddit\.com\/r\/\w+\/comments\/\w+\/\w+[^\s]/g
-            )
-        ].map((match) => match[0]) ?? new Array<string>();
-
-    userLinks.concat(
-        [...content.matchAll(/(?<=\s|^)https?:\/\/(www\.)?redd\.it\/\w+\/?/g)].map(
-            (match) => match[0]
-        ) ?? new Array<string>()
-    );
+            ),
+            ...content.matchAll(/(?<=\s|^)https?:\/\/(www\.)?redd\.it\/\w+\/?/g)
+        ].map((match) => match[0]);
 
     if (!userLinks) return [];
     //check if the link is wrapped by <>
