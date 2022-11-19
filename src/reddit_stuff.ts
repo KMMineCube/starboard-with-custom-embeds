@@ -41,7 +41,6 @@ async function composeRedditEmbed(
     if (is_video) {
         imageLink = null;
         // imageLink = mediaData.media.reddit_video.fallback_url;
-        // console.log(imageLink);
     } else if (numImages === 1) {
         imageLink = mediaData.url_overridden_by_dest;
     } else if (numImages > 1) {
@@ -56,7 +55,6 @@ async function composeRedditEmbed(
         imageLink = null;
     }
 
-    
     // if reddit post has a gif
     if (mediaData.post_hint === 'rich:video') {
         imageLink = mediaData.media.oembed.thumbnail_url;
@@ -77,7 +75,7 @@ async function composeRedditEmbed(
         pageNumber,
         numImages
     );
-    if(imageLink === null) {
+    if (imageLink === null) {
         return undefined;
     } else {
         return embed;
@@ -88,13 +86,12 @@ async function searchForRedditLink(message: Message | string): Promise<string[]>
     // search for link and get the link with the character preceding it, if it exists
     const content = message instanceof Message ? message.content : message;
 
-    const userLinks =
-        [
-            ...content.matchAll(
-                /(?<=\s|^)https?:\/\/(www\.)?reddit\.com\/r\/\w+\/comments\/\w+\/\w+[^\s]/g
-            ),
-            ...content.matchAll(/(?<=\s|^)https?:\/\/(www\.)?redd\.it\/\w+\/?/g)
-        ].map((match) => match[0]);
+    const userLinks = [
+        ...content.matchAll(
+            /(?<=\s|^)https?:\/\/(www\.)?reddit\.com\/r\/\w+\/comments\/\w+\/\w+[^\s]/g
+        ),
+        ...content.matchAll(/(?<=\s|^)https?:\/\/(www\.)?redd\.it\/\w+\/?/g)
+    ].map((match) => match[0]);
 
     if (!userLinks) return [];
     //check if the link is wrapped by <>

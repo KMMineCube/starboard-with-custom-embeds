@@ -13,19 +13,20 @@ const client: Client<true> = new Client({
     ]
 });
 
+client.once('ready', () => {
+    console.log('\nBot is ready!');
+});
+
 client
     .login(bot_creds.token)
     .then(() => {
-        console.log(`\nLogged in as ${client.user.username}!`);
+        console.log(`Logged in as ${client.user.username}!`);
     })
     .catch((err: Error) => {
         console.error('Login Unsuccessful. Check credentials.');
         throw err;
     });
 
-client.once('ready', () => {
-    console.log('Bot is ready!');
-});
 
 client.on('messageCreate', async (message) => {
     await replaceLinkWithEmbed(message);

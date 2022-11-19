@@ -1,4 +1,5 @@
 import { BaseMessageOptions, Embed, Message, User } from 'discord.js';
+import { composeInstagramEmbed, searchForInstagramLink } from './instagram_stuff.js';
 import { searchForRedditLink, composeRedditEmbed } from './reddit_stuff.js';
 import { searchForTwitterLink, composeTwitterEmbed } from './twitter_stuff.js';
 
@@ -29,6 +30,11 @@ const searchAndEmbedCollection: {
         type: 'twitter',
         searchFunction: searchForTwitterLink,
         composeEmbedFunction: composeTwitterEmbed
+    },
+    {
+        type: 'instagram',
+        searchFunction: searchForInstagramLink,
+        composeEmbedFunction: composeInstagramEmbed
     }
 ];
 
@@ -38,19 +44,25 @@ const searchAndEmbedCollection: {
  * @param embed
  * @returns [link, type]
  */
-function getLinkFromHootBotEmbed(embed: Embed): [string | null, string] {
+async function getLinkFromHootBotEmbed(embed: Embed): Promise<[string | null, string]> {
     const link =
         embed?.fields
             .find((field) => field.name === 'Source')
             ?.value.split('](')[1]
             ?.slice(0, -1) ?? null;
+
     if (link === null) return [null, ''];
-    //search through the searchAndEmbedCollection to find the type of link
-    const type =
-        searchAndEmbedCollection.find(
-            async (obj) => (await obj.searchFunction(link)).length > 0
-        )?.type ?? '';
-    return [link, type];
+    //search through the searchAndEmbedCollection to find the type of link using the search function
+    let _type = '';
+    // find function refuses to work for some stupid reason
+    for (const { type, searchFunction } of searchAndEmbedCollection) {
+        const links = await searchFunction(link);
+        if (links.length > 0) {
+            _type = type;
+            break;
+        }
+    }
+    return [link, _type];
 }
 
 /**
@@ -59,7 +71,7 @@ function getLinkFromHootBotEmbed(embed: Embed): [string | null, string] {
  * @param embed
  * @returns
  */
-function getPageNumbersFromHootBotEmbed(embed: Embed): [number, number] {
+async function getPageNumbersFromHootBotEmbed(embed: Embed): Promise<[number, number]> {
     // field is in the format "1/5"
     let [currentPage, maxPage] = embed?.fields
         .find((field) => field.name === 'Page')

@@ -61,12 +61,12 @@ async function shiftPage(
         return;
     }
 
-    const [link, type] = getLinkFromHootBotEmbed(embed);
+    const [link, type] = await getLinkFromHootBotEmbed(embed);
     if (link === null) {
         return;
     }
 
-    const [currentPage, maxPage] = getPageNumbersFromHootBotEmbed(embed);
+    const [currentPage, maxPage] = await getPageNumbersFromHootBotEmbed(embed);
 
     const condition = direction === 'next' ? currentPage < maxPage : currentPage > 1;
     if (condition) {
