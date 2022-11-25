@@ -51,8 +51,16 @@ class GuildStuff {
         this._defaultStarThreshold = threshold;
     }
 
-    public setCustomSettingsChannel(channel: ChannelStuff): void {
-        this._customSettingsChannels.set(channel.channel.id, channel);
+    public setChannelOverride(
+        channel: TextChannel,
+        starEmoji: string,
+        starThreshold: number,
+        enabled: boolean
+    ): void {
+        this._customSettingsChannels.set(
+            channel.id,
+            new ChannelStuff(channel, starEmoji, starThreshold, enabled)
+        );
     }
 
     public static fromJSON(json: string): GuildStuff {

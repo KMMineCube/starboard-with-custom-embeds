@@ -3,14 +3,14 @@ import { Emoji, TextChannel } from 'discord.js';
 class ChannelStuff {
     public readonly channel: TextChannel;
     private _enabled = true;
-    private _starEmoji: Emoji;
+    private _starEmoji: string;
     private _starThreshold: number;
 
     get enabled(): boolean {
         return this._enabled;
     }
 
-    get starEmoji(): Emoji {
+    get starEmoji(): string {
         return this._starEmoji;
     }
 
@@ -18,10 +18,11 @@ class ChannelStuff {
         return this._starThreshold;
     }
 
-    constructor(channel: TextChannel, starEmoji: Emoji, starThreshold: number) {
+    constructor(channel: TextChannel, starEmoji: string, starThreshold: number, enabled: boolean = true) {
         this.channel = channel;
         this._starEmoji = starEmoji;
         this._starThreshold = starThreshold;
+        this._enabled = enabled;
     }
 
     public static fromJSON(json: string): ChannelStuff {
@@ -33,7 +34,7 @@ class ChannelStuff {
         return JSON.stringify(this);
     }
 
-    public setStarEmoji(emoji: Emoji): void {
+    public setStarEmoji(emoji: string): void {
         this._starEmoji = emoji;
     }
 
