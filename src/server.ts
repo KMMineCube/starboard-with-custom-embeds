@@ -1,4 +1,4 @@
-import { Guild, Emoji, Collection } from 'discord.js';
+import { Guild, Collection, TextChannel } from 'discord.js';
 import ChannelStuff from './channel.js';
 import { ChannelId } from './utilities.js';
 
@@ -6,7 +6,7 @@ class GuildStuff {
     public readonly guild: Guild;
     private _defaultStarEmoji: string;
     private _defaultStarThreshold: number;
-    private _starboardChannel: ChannelStuff | null = null;
+    private _starboardChannel: TextChannel | null = null;
     private _customSettingsChannels: Collection<ChannelId, ChannelStuff>;
 
     get defaultStarEmoji(): string {
@@ -17,7 +17,7 @@ class GuildStuff {
         return this._defaultStarThreshold;
     }
 
-    get starboardChannel(): ChannelStuff | null {
+    get starboardChannel(): TextChannel | null {
         return this._starboardChannel;
     }
 
@@ -29,7 +29,7 @@ class GuildStuff {
         guild: Guild,
         defaultStarEmoji: string,
         defaultStarThreshold: number,
-        starboardChannel: ChannelStuff | null,
+        starboardChannel: TextChannel | null,
         customSettingsChannels: Collection<ChannelId, ChannelStuff>
     ) {
         this.guild = guild;
@@ -39,7 +39,7 @@ class GuildStuff {
         this._customSettingsChannels = customSettingsChannels;
     }
 
-    public setStarboardChannel(channel: ChannelStuff | null): void {
+    public setStarboardChannel(channel: TextChannel | null): void {
         this._starboardChannel = channel;
     }
 

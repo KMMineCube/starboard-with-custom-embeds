@@ -1,29 +1,10 @@
-import { Client, Collection, Events, GatewayIntentBits } from 'discord.js';
-
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'url';
+import { Collection, Events } from 'discord.js';
 
 import bot_creds from '../bot_creds.json' assert { type: 'json' };
 import { handleButton } from './button_handler.js';
+import { allServerData, client } from './global_stuff.js';
 import { replaceLinkWithEmbed } from './message_to_embed.js';
 import GuildStuff from './server.js';
-import { commandData, extendedClient } from './utilities.js';
-
-const baseClient: Client<true> = new Client({
-    intents: [
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.MessageContent
-    ]
-});
-
-const client = new extendedClient(baseClient);
-
-client.commands = new Collection();
-
-const allServerData = new Collection<string, GuildStuff>();
 
 client.on(Events.ClientReady, () => {
     console.log('\nBot is ready!');
