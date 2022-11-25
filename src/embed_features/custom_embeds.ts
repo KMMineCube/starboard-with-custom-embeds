@@ -5,6 +5,8 @@ import {
     ButtonStyle,
     EmbedBuilder,
     HexColorString,
+    Message,
+    PartialMessage,
     User
 } from 'discord.js';
 
@@ -98,4 +100,38 @@ function generic_custom_embed(
     }
 }
 
-export { generic_custom_embed };
+function starboardEmbed(message: Message | PartialMessage): BaseMessageOptions {
+    const embed = new EmbedBuilder()
+        .setTitle(
+            message.member?.displayName ?? message.author?.username ?? 'Unknown User'
+        )
+        .setDescription(message.content)
+        .setFields([
+            {
+                name: 'Author',
+                value: message.author?.toString() ?? 'Unknown User',
+                inline: true
+            },
+            {
+                name: 'Channel',
+                value: message.channel.toString(),
+                inline: true
+            },
+            {
+                name: 'Location',
+                value: `[Click here](${message.url})`,
+                inline: true
+            }
+        ]);
+
+    if (message.attachments.size > 0) {
+        const url = message.attachments.first()?.url;
+        if (url) {
+            embed.setImage(url);
+        }
+    }
+
+    return { embeds: [embed] };
+}
+
+export { generic_custom_embed, starboardEmbed };

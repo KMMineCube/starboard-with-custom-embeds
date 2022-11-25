@@ -1,6 +1,15 @@
-import { Guild, Collection, TextChannel } from 'discord.js';
+import {
+    Guild,
+    Collection,
+    TextChannel,
+    MessageReaction,
+    User,
+    PartialMessageReaction
+} from 'discord.js';
 import ChannelStuff from './channel.js';
 import { ChannelId } from '../utilities.js';
+import { starboardEmbed } from '../embed_features/custom_embeds.js';
+import channel from './channel.js';
 
 class GuildStuff {
     public readonly guild: Guild;
@@ -61,6 +70,36 @@ class GuildStuff {
             channel.id,
             new ChannelStuff(channel, starEmoji, starThreshold, enabled)
         );
+    }
+
+    public handleReaction(reaction: MessageReaction | PartialMessageReaction): boolean {
+        // check for channel overrides
+        const channelOverride = this._customSettingsChannels.get(
+            reaction.message.channel.id
+        );
+        if (this._starboardChannel === null) {
+            return false;
+        }
+        if (channelOverride) {
+            if (channelOverride.enabled) {
+                if (
+                    reaction.emoji.name === channelOverride.starEmoji &&
+                    reaction.count === channelOverride.starThreshold
+                ) {
+                    this._starboardChannel.send(starboardEmbed(reaction.message));
+                    return true;
+                }
+            }
+        } else {
+            if (
+                reaction.emoji.name === this._defaultStarEmoji &&
+                reaction.count === this._defaultStarThreshold
+            ) {
+                this._starboardChannel.send(starboardEmbed(reaction.message));
+                return true;
+            }
+        }
+        return false;
     }
 
     public static fromJSON(json: string): GuildStuff {

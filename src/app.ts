@@ -69,3 +69,14 @@ client.on(Events.GuildEmojiDelete, (emoji) => {
         server.setDefaultStarEmoji('⭐');
     }
 });
+
+client.on(Events.MessageReactionAdd, async (reaction, user) => {
+    if (user.bot) {
+        return;
+    }
+    const server = allServerData.get(reaction.message.guildId ?? '');
+    if (server === undefined) {
+        return;
+    }
+    server.handleReaction(reaction);
+});

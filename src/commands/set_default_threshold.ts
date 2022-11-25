@@ -10,12 +10,12 @@ import { commandData } from '../utilities.js';
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('set_star_emoji')
-        .setDescription('Set the emoji to use for starring messages.')
-        .addStringOption((option) =>
+        .setName('set_default_threshold')
+        .setDescription('Set the default threshold for starring messages.')
+        .addIntegerOption((option) =>
             option
-                .setName('emoji')
-                .setDescription('The emoji to use for starring messages.')
+                .setName('threshold')
+                .setDescription('The threshold to use for starring messages.')
                 .setRequired(true)
         ),
     async execute(interaction: ChatInputCommandInteraction) {
@@ -30,10 +30,10 @@ export default {
             return;
         }
         // set starboard channel
-        const newEmoji = interaction.options.getString('emoji', true);
-        server.setDefaultStarEmoji(newEmoji);
+        const newThreshold = interaction.options.getInteger('threshold', true);
+        server.setDefaultStarThreshold(newThreshold);
         await interaction.reply(
-            `Default star emoji set to ${newEmoji}. Specific channel overrides have not been updated.`
+            `Default star threshold set to ${newThreshold}. Specific channel overrides have not been updated.`
         );
     }
 } as commandData;

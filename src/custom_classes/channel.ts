@@ -18,7 +18,12 @@ class ChannelStuff {
         return this._starThreshold;
     }
 
-    constructor(channel: TextChannel, starEmoji: string, starThreshold: number, enabled: boolean = true) {
+    constructor(
+        channel: TextChannel,
+        starEmoji: string,
+        starThreshold: number,
+        enabled: boolean = true
+    ) {
         this.channel = channel;
         this._starEmoji = starEmoji;
         this._starThreshold = starThreshold;
