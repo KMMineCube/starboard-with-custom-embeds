@@ -1,5 +1,10 @@
-import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from 'discord.js';
-import { allServerData } from '../global_stuff.js';
+import {
+    ChannelType,
+    ChatInputCommandInteraction,
+    SlashCommandBuilder,
+    TextChannel
+} from 'discord.js';
+import { allServerData } from '../custom_classes/extended_client.js';
 
 import { commandData } from '../utilities.js';
 
@@ -28,15 +33,11 @@ export default {
         }
         // set starboard channel
         const newChannel = interaction.options.getChannel('channel', true);
-        if(newChannel.type === ChannelType.GuildText) {
+        if (newChannel.type === ChannelType.GuildText) {
             server.setStarboardChannel(newChannel as TextChannel);
             await interaction.reply(`Starboard channel set to ${newChannel.toString()}`);
         } else {
-            await interaction.reply(
-                'Error: Channel provided is not a text channel.'
-            )
+            await interaction.reply('Error: Channel provided is not a text channel.');
         }
-
-       
     }
 } as commandData;

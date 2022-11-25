@@ -1,7 +1,7 @@
 import { Client, Collection, GatewayIntentBits, REST, Routes } from 'discord.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { commandData } from './utilities.js';
+import { commandData } from '../utilities.js';
 import fs from 'node:fs';
 import GuildStuff from './server.js';
 
@@ -17,7 +17,7 @@ class extendedClient extends Client<true> {
 
         const __dirname = path.dirname(__filename);
 
-        const commandsPath = path.join(__dirname, 'commands');
+        const commandsPath = path.join(__dirname, '../commands');
         const commandFiles = fs
             .readdirSync(commandsPath)
             .filter((file) => file.endsWith('.js'));

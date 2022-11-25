@@ -1,6 +1,6 @@
 import { Guild, Collection, TextChannel } from 'discord.js';
 import ChannelStuff from './channel.js';
-import { ChannelId } from './utilities.js';
+import { ChannelId } from '../utilities.js';
 
 class GuildStuff {
     public readonly guild: Guild;

@@ -1,5 +1,5 @@
 import { BaseMessageOptions, Message, User } from 'discord.js';
-import { notEmpty } from './utilities.js';
+import { notEmpty } from '../utilities.js';
 import { generic_custom_embed } from './custom_embeds.js';
 
 /**

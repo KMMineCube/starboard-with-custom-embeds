@@ -7,9 +7,18 @@ import {
     Snowflake,
     User
 } from 'discord.js';
-import { composeInstagramEmbed, searchForInstagramLink } from './instagram_stuff.js';
-import { searchForRedditLink, composeRedditEmbed } from './reddit_stuff.js';
-import { searchForTwitterLink, composeTwitterEmbed } from './twitter_stuff.js';
+import {
+    composeInstagramEmbed,
+    searchForInstagramLink
+} from './embed_features/instagram_stuff.js';
+import {
+    searchForRedditLink,
+    composeRedditEmbed
+} from './embed_features/reddit_stuff.js';
+import {
+    searchForTwitterLink,
+    composeTwitterEmbed
+} from './embed_features/twitter_stuff.js';
 
 function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
     return value !== null && value !== undefined;

@@ -2,9 +2,9 @@ import { Collection, Events } from 'discord.js';
 
 import bot_creds from '../bot_creds.json' assert { type: 'json' };
 import { handleButton } from './button_handler.js';
-import { allServerData, client } from './global_stuff.js';
-import { replaceLinkWithEmbed } from './message_to_embed.js';
-import GuildStuff from './server.js';
+import { allServerData, client } from './custom_classes/extended_client.js';
+import { replaceLinkWithEmbed } from './embed_features/message_to_embed.js';
+import GuildStuff from './custom_classes/server.js';
 
 client.on(Events.ClientReady, () => {
     console.log('\nBot is ready!');
