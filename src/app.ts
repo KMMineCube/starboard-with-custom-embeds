@@ -1,11 +1,15 @@
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 
+import fs from 'node:fs';
+import path from 'node:path';
+
 import bot_creds from '../bot_creds.json' assert { type: 'json' };
 import { handleButton } from './button_handler.js';
 import { replaceLinkWithEmbed } from './message_to_embed.js';
 import GuildStuff from './server.js';
+import { extendedClient } from './utilities.js';
 
-const client: Client<true> = new Client({
+const baseClient: Client<true> = new Client({
     intents: [
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
@@ -13,6 +17,10 @@ const client: Client<true> = new Client({
         GatewayIntentBits.MessageContent
     ]
 });
+
+const client = new extendedClient(baseClient);
+
+client.commands = new Collection();
 
 let allServerData = new Collection<string, GuildStuff>();
 

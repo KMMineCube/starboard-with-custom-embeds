@@ -9,7 +9,6 @@ import {
     getPageNumbersFromHootBotEmbed,
     searchAndEmbedCollection
 } from './utilities.js';
-import { composeRedditEmbed } from './reddit_stuff.js';
 
 /**
  * Handles button interactions.

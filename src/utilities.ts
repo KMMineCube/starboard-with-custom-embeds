@@ -1,10 +1,23 @@
-import { BaseMessageOptions, Embed, Message, Snowflake, User } from 'discord.js';
+import { BaseMessageOptions, ChatInputCommandInteraction, Client, Collection, Embed, Message, SlashCommandBuilder, Snowflake, User } from 'discord.js';
 import { composeInstagramEmbed, searchForInstagramLink } from './instagram_stuff.js';
 import { searchForRedditLink, composeRedditEmbed } from './reddit_stuff.js';
 import { searchForTwitterLink, composeTwitterEmbed } from './twitter_stuff.js';
 
 function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
     return value !== null && value !== undefined;
+}
+
+type commandData = {
+    data: SlashCommandBuilder;
+    execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+}
+
+class extendedClient extends Client<true> {
+    public commands: Collection<string, commandData>;
+    public constructor(client: Client) {
+        super(client.options);
+        this.commands = new Collection();
+    }
 }
 
 type ChannelId = Snowflake;
@@ -87,6 +100,7 @@ async function getPageNumbersFromHootBotEmbed(embed: Embed): Promise<[number, nu
 export {
     notEmpty,
     ChannelId,
+    extendedClient,
     searchForLinkCallback,
     composeCustomEmbedCallback,
     searchAndEmbedCollection,
