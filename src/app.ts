@@ -1,8 +1,9 @@
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, GatewayIntentBits } from 'discord.js';
 
 import bot_creds from '../bot_creds.json' assert { type: 'json' };
 import { handleButton } from './button_handler.js';
 import { replaceLinkWithEmbed } from './message_to_embed.js';
+import GuildStuff from './server.js';
 
 const client: Client<true> = new Client({
     intents: [
@@ -13,8 +14,17 @@ const client: Client<true> = new Client({
     ]
 });
 
-client.once('ready', () => {
+let allServerData = new Collection<string, GuildStuff>();
+
+client.on('ready', () => {
     console.log('\nBot is ready!');
+
+    client.guilds.cache.forEach((guild) => {
+        allServerData.set(
+            guild.id,
+            new GuildStuff(guild, '⭐', 3, null, new Collection())
+        );
+    });
 });
 
 client
@@ -27,7 +37,6 @@ client
         throw err;
     });
 
-
 client.on('messageCreate', async (message) => {
     await replaceLinkWithEmbed(message);
 });
@@ -36,4 +45,8 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.isButton()) {
         handleButton(interaction);
     }
+});
+
+client.on('joinGuild', (guild) => {
+    allServerData.set(guild.id, new GuildStuff(guild, '⭐', 3, null, new Collection()));
 });

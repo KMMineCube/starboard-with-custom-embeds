@@ -1,4 +1,4 @@
-import { BaseMessageOptions, Embed, Message, User } from 'discord.js';
+import { BaseMessageOptions, Embed, Message, Snowflake, User } from 'discord.js';
 import { composeInstagramEmbed, searchForInstagramLink } from './instagram_stuff.js';
 import { searchForRedditLink, composeRedditEmbed } from './reddit_stuff.js';
 import { searchForTwitterLink, composeTwitterEmbed } from './twitter_stuff.js';
@@ -6,6 +6,8 @@ import { searchForTwitterLink, composeTwitterEmbed } from './twitter_stuff.js';
 function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
     return value !== null && value !== undefined;
 }
+
+type ChannelId = Snowflake;
 
 type searchForLinkCallback = (link: Message | string) => Promise<string[]>;
 
@@ -84,6 +86,7 @@ async function getPageNumbersFromHootBotEmbed(embed: Embed): Promise<[number, nu
 
 export {
     notEmpty,
+    ChannelId,
     searchForLinkCallback,
     composeCustomEmbedCallback,
     searchAndEmbedCollection,
