@@ -1,13 +1,14 @@
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, Events, GatewayIntentBits } from 'discord.js';
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'url';
 
 import bot_creds from '../bot_creds.json' assert { type: 'json' };
 import { handleButton } from './button_handler.js';
 import { replaceLinkWithEmbed } from './message_to_embed.js';
 import GuildStuff from './server.js';
-import { extendedClient } from './utilities.js';
+import { commandData, extendedClient } from './utilities.js';
 
 const baseClient: Client<true> = new Client({
     intents: [
@@ -22,9 +23,9 @@ const client = new extendedClient(baseClient);
 
 client.commands = new Collection();
 
-let allServerData = new Collection<string, GuildStuff>();
+const allServerData = new Collection<string, GuildStuff>();
 
-client.on('ready', () => {
+client.on(Events.ClientReady, () => {
     console.log('\nBot is ready!');
 
     client.guilds.cache.forEach((guild) => {
@@ -33,6 +34,8 @@ client.on('ready', () => {
             new GuildStuff(guild, '⭐', 3, null, new Collection())
         );
     });
+
+    client.deployCommands();
 });
 
 client
@@ -45,16 +48,43 @@ client
         throw err;
     });
 
-client.on('messageCreate', async (message) => {
+client.on(Events.MessageCreate, async (message) => {
     await replaceLinkWithEmbed(message);
 });
 
-client.on('interactionCreate', async (interaction) => {
+client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isButton()) {
         handleButton(interaction);
     }
+    if (interaction.isChatInputCommand()) {
+        const command = client.commands.get(interaction.commandName);
+        if (!command) return;
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({
+                content: 'There was an error while executing this command!',
+                ephemeral: true
+            });
+        }
+    }
 });
 
-client.on('joinGuild', (guild) => {
+client.on(Events.GuildCreate, (guild) => {
     allServerData.set(guild.id, new GuildStuff(guild, '⭐', 3, null, new Collection()));
+});
+
+client.on(Events.GuildDelete, (guild) => {
+    allServerData.delete(guild.id);
+});
+
+client.on(Events.GuildEmojiDelete, (emoji) => {
+    const server = allServerData.get(emoji.guild.id);
+    if (server === undefined) {
+        return;
+    }
+    if (server.defaultStarEmoji === emoji.toString()) {
+        server.setDefaultStarEmoji('⭐');
+    }
 });

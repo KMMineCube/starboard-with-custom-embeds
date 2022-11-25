@@ -39,6 +39,22 @@ class GuildStuff {
         this._customSettingsChannels = customSettingsChannels;
     }
 
+    public setStarboardChannel(channel: ChannelStuff | null): void {
+        this._starboardChannel = channel;
+    }
+
+    public setDefaultStarEmoji(emoji: string): void {
+        this._defaultStarEmoji = emoji;
+    }
+
+    public setDefaultStarThreshold(threshold: number): void {
+        this._defaultStarThreshold = threshold;
+    }
+
+    public setCustomSettingsChannel(channel: ChannelStuff): void {
+        this._customSettingsChannels.set(channel.channel.id, channel);
+    }
+
     public static fromJSON(json: string): GuildStuff {
         const obj = JSON.parse(json);
         return new GuildStuff(
