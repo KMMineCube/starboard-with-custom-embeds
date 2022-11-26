@@ -60,19 +60,4 @@ class extendedClient extends Client<true> {
     }
 }
 
-const baseClient: Client<true> = new Client({
-    intents: [
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.MessageContent
-    ]
-});
-
-const client = new extendedClient(baseClient);
-
-client.commands = new Collection();
-
-const allServerData = new Collection<string, GuildStuff>();
-
-export { extendedClient, client, allServerData };
+export { extendedClient};
