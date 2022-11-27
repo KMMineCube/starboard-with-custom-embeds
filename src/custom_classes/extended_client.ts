@@ -3,7 +3,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { commandData } from '../utilities.js';
 import fs from 'node:fs';
-import GuildStuff from './server.js';
 
 class extendedClient extends Client<true> {
     public commands: Collection<string, commandData>;
@@ -60,4 +59,4 @@ class extendedClient extends Client<true> {
     }
 }
 
-export { extendedClient};
+export { extendedClient };

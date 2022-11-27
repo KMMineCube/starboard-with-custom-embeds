@@ -4,7 +4,7 @@ import {
     SlashCommandBuilder,
     TextChannel
 } from 'discord.js';
-import { allServerData } from '../global-stuff';
+import { allServerData } from '../global-stuff.js';
 
 import { commandData } from '../utilities.js';
 

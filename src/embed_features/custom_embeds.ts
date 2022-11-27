@@ -102,16 +102,8 @@ function generic_custom_embed(
 
 function starboardEmbed(message: Message | PartialMessage): BaseMessageOptions {
     const embed = new EmbedBuilder()
-        .setTitle(
-            message.member?.displayName ?? message.author?.username ?? 'Unknown User'
-        )
-        .setDescription(message.content)
+        .setDescription(message.content === '' ? '`no message`' : message.content)
         .setFields([
-            {
-                name: 'Author',
-                value: message.author?.toString() ?? 'Unknown User',
-                inline: true
-            },
             {
                 name: 'Channel',
                 value: message.channel.toString(),
@@ -122,16 +114,36 @@ function starboardEmbed(message: Message | PartialMessage): BaseMessageOptions {
                 value: `[Click here](${message.url})`,
                 inline: true
             }
-        ]);
+        ])
+        .setAuthor({
+            name: message.author?.username ?? 'Unknown User',
+            iconURL: message.author?.avatarURL() ?? undefined
+            });
 
     if (message.attachments.size > 0) {
-        const url = message.attachments.first()?.url;
-        if (url) {
-            embed.setImage(url);
+        const firstAttachment = message.attachments.first();
+        if (firstAttachment) {
+            const url = firstAttachment.url;
+            if (
+                url &&
+                (firstAttachment.contentType?.includes('image/') ||
+                    firstAttachment.contentType?.includes('gif/'))
+            ) {
+                embed.setImage(url);
+            }
         }
     }
 
-    return { embeds: [embed] };
+    const nonImageAttachments = message.attachments.filter((att) => {
+        const contentType = att.contentType;
+        return (
+            contentType &&
+            !contentType.includes('image/') &&
+            !contentType.includes('gif/')
+        );
+    });
+
+    return { embeds: [embed, ...message.embeds], files: [...nonImageAttachments.values()] };
 }
 
 export { generic_custom_embed, starboardEmbed };
