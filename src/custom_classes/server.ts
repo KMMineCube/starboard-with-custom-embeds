@@ -3,13 +3,11 @@ import {
     Collection,
     TextChannel,
     MessageReaction,
-    User,
     PartialMessageReaction
 } from 'discord.js';
 import ChannelStuff from './channel.js';
 import { ChannelId } from '../utilities.js';
 import { starboardEmbed } from '../embed_features/custom_embeds.js';
-import channel from './channel.js';
 
 class GuildStuff {
     public readonly guild: Guild;
@@ -73,6 +71,11 @@ class GuildStuff {
     }
 
     public handleReaction(reaction: MessageReaction | PartialMessageReaction): boolean {
+        // if message is in starboard channel, ignore
+        if (reaction.message.channel.id === this._starboardChannel?.id) {
+            return false;
+        }
+
         // check for channel overrides
         const channelOverride = this._customSettingsChannels.get(
             reaction.message.channel.id

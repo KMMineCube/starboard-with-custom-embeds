@@ -1,14 +1,17 @@
 import {
     ActionRowBuilder,
+    APIEmbedField,
     BaseMessageOptions,
     ButtonBuilder,
     ButtonStyle,
+    Colors,
     EmbedBuilder,
     HexColorString,
     Message,
     PartialMessage,
     User
 } from 'discord.js';
+import { getSenderIdFromHootBotEmbed } from '../utilities.js';
 
 /**
  * Creates a custom hootbot embed
@@ -100,7 +103,7 @@ function generic_custom_embed(
     }
 }
 
-function starboardEmbed(message: Message | PartialMessage): BaseMessageOptions {
+function starboardEmbedFromUser(message: Message | PartialMessage): BaseMessageOptions {
     const embed = new EmbedBuilder()
         .setDescription(message.content === '' ? '`no message`' : message.content)
         .setFields([
@@ -111,14 +114,18 @@ function starboardEmbed(message: Message | PartialMessage): BaseMessageOptions {
             },
             {
                 name: 'Location',
-                value: `[Click here](${message.url})`,
+                value: `[Go to Message](${message.url})`,
                 inline: true
             }
         ])
         .setAuthor({
             name: message.author?.username ?? 'Unknown User',
             iconURL: message.author?.avatarURL() ?? undefined
-            });
+        })
+        .setFooter({
+            text: `HootBot v0.0.1`
+        })
+        .setColor(Colors.Yellow);
 
     if (message.attachments.size > 0) {
         const firstAttachment = message.attachments.first();
@@ -143,7 +150,78 @@ function starboardEmbed(message: Message | PartialMessage): BaseMessageOptions {
         );
     });
 
-    return { embeds: [embed, ...message.embeds], files: [...nonImageAttachments.values()] };
+    return {
+        embeds: [embed, ...message.embeds],
+        files: [...nonImageAttachments.values()]
+    };
+}
+
+function starboardEmbedFromBot(message: Message | PartialMessage): BaseMessageOptions {
+    const botEmbed = message.embeds[0];
+    // This should never be called, but just in case
+    if (!botEmbed) {
+        return { embeds: [] };
+    }
+
+    const newBotEmbedJSON = botEmbed.toJSON();
+
+    const authorId = getSenderIdFromHootBotEmbed(botEmbed);
+    if (authorId !== null) {
+        // get user from author id
+        const author = message.client.users.cache.get(authorId);
+        newBotEmbedJSON.author = {
+            name: author?.username ?? 'Unknown User',
+            icon_url: author?.avatarURL() ?? undefined
+        };
+    }
+
+    // remove title
+    newBotEmbedJSON.title = undefined;
+    // add channel to fields
+
+    const newFields: APIEmbedField[] = [
+        {
+            name: 'Channel',
+            value: message.channel.toString(),
+            inline: true
+        },
+        {
+            name: 'Location',
+            value: `[Go to Message](${message.url})`,
+            inline: true
+        }
+    ];
+
+    // if fields exist, then take the source field and append it to the end
+    if (newBotEmbedJSON.fields) {
+        const sourceField = newBotEmbedJSON.fields.find(
+            (field) => field.name === 'Source'
+        );
+        if (sourceField) {
+            newFields.push(sourceField);
+        }
+    }
+
+    newBotEmbedJSON.fields = newFields;
+
+    // change color to yellow
+
+    newBotEmbedJSON.color = Colors.Yellow;
+
+    const newBotEmbed = new EmbedBuilder(newBotEmbedJSON);
+
+    return {
+        embeds: [newBotEmbed]
+    };
+}
+
+function starboardEmbed(message: Message | PartialMessage): BaseMessageOptions {
+    // if the message is from a bot, use the bot's embed
+    if (message.author?.bot && message.embeds.length > 0) {
+        return starboardEmbedFromBot(message);
+    } else {
+        return starboardEmbedFromUser(message);
+    }
 }
 
 export { generic_custom_embed, starboardEmbed };

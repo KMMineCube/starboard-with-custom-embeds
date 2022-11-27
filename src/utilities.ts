@@ -68,7 +68,9 @@ const searchAndEmbedCollection: {
  * @param embed
  * @returns [link, type]
  */
-async function getLinkFromHootBotEmbed(embed: Embed): Promise<[string | null, string]> {
+async function getSourceLinkFromHootBotEmbed(
+    embed: Embed
+): Promise<[string | null, string]> {
     const link =
         embed?.fields
             .find((field) => field.name === 'Source')
@@ -106,6 +108,14 @@ async function getPageNumbersFromHootBotEmbed(embed: Embed): Promise<[number, nu
     return [currentPage, maxPage];
 }
 
+function getSenderIdFromHootBotEmbed(embed: Embed): Snowflake | null {
+    const sender = embed?.fields.find((field) => field.name === 'Sender')?.value;
+    if (!sender) return null;
+    const senderId = sender.match(/<@!?(?<id>\d+)>/)?.groups?.id;
+    if (!senderId) return null;
+    return senderId;
+}
+
 export {
     notEmpty,
     ChannelId,
@@ -113,6 +123,7 @@ export {
     searchForLinkCallback,
     composeCustomEmbedCallback,
     searchAndEmbedCollection,
-    getLinkFromHootBotEmbed,
-    getPageNumbersFromHootBotEmbed
+    getSourceLinkFromHootBotEmbed,
+    getPageNumbersFromHootBotEmbed,
+    getSenderIdFromHootBotEmbed
 };

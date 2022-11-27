@@ -1,11 +1,6 @@
+import { ButtonInteraction, GuildMember, PermissionsBitField } from 'discord.js';
 import {
-    BaseMessageOptions,
-    ButtonInteraction,
-    GuildMember,
-    PermissionsBitField
-} from 'discord.js';
-import {
-    getLinkFromHootBotEmbed,
+    getSourceLinkFromHootBotEmbed,
     getPageNumbersFromHootBotEmbed,
     searchAndEmbedCollection
 } from './utilities.js';
@@ -60,7 +55,7 @@ async function shiftPage(
         return;
     }
 
-    const [link, type] = await getLinkFromHootBotEmbed(embed);
+    const [link, type] = await getSourceLinkFromHootBotEmbed(embed);
     if (link === null) {
         return;
     }
