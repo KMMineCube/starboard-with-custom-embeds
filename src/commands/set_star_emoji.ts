@@ -1,6 +1,8 @@
 import {
     ChannelType,
     ChatInputCommandInteraction,
+    GuildMember,
+    PermissionsBitField,
     SlashCommandBuilder,
     TextChannel
 } from 'discord.js';
@@ -19,6 +21,15 @@ export default {
                 .setRequired(true)
         ),
     async execute(interaction: ChatInputCommandInteraction) {
+        // user must have MANAGE_CHANNELS permission
+        const member = interaction.member as GuildMember;
+        if (!member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+            await interaction.reply({
+                content: 'You do not have permission to use this command.',
+                ephemeral: true
+            });
+            return;
+        }
         // find server in allserverdata
         const server = allServerData.find(
             (server) => server.guild.id === interaction.guildId

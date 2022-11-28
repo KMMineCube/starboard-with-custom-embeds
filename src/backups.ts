@@ -47,7 +47,7 @@ async function restoreServerSettings(): Promise<void> {
                 const server = GuildStuff.fromJSON(backupData);
                 const guildId = server.guild.id;
                 allServerData.set(guildId, server);
-                console.log('restored server settings for ' + server.guild.name);
+                console.log('Restored server settings for ' + server.guild.name);
             }
         });
     });

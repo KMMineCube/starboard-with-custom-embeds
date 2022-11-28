@@ -1,6 +1,8 @@
 import {
     ChatInputCommandInteraction,
     EmbedBuilder,
+    GuildMember,
+    PermissionsBitField,
     SlashCommandBuilder
 } from 'discord.js';
 import { allServerData } from '../global-stuff.js';
@@ -12,6 +14,15 @@ export default {
         .setName('view_overrides')
         .setDescription('View the starboard overrides for this server.'),
     async execute(interaction: ChatInputCommandInteraction) {
+        // user must have MANAGE_CHANNELS permission
+        const member = interaction.member as GuildMember;
+        if (!member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+            await interaction.reply({
+                content: 'You do not have permission to use this command.',
+                ephemeral: true
+            });
+            return;
+        }
         // find server in allserverdata
         const server = allServerData.find(
             (server) => server.guild.id === interaction.guildId
