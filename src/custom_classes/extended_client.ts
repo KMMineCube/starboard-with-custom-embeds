@@ -1,8 +1,8 @@
-import { Client, Collection, GatewayIntentBits, REST, Routes } from 'discord.js';
+import { Client, Collection, REST, Routes } from 'discord.js';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { commandData } from '../utilities.js';
 import fs from 'node:fs';
+import { _src_dirname } from '../global-stuff.js';
 
 class extendedClient extends Client<true> {
     public commands: Collection<string, commandData>;
@@ -12,11 +12,8 @@ class extendedClient extends Client<true> {
     }
     public async deployCommands() {
         const commands = [];
-        const __filename = fileURLToPath(import.meta.url);
 
-        const __dirname = path.dirname(__filename);
-
-        const commandsPath = path.join(__dirname, '../commands');
+        const commandsPath = path.join(_src_dirname, './commands');
         const commandFiles = fs
             .readdirSync(commandsPath)
             .filter((file) => file.endsWith('.js'));

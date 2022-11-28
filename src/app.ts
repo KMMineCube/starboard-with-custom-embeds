@@ -4,12 +4,22 @@ import bot_creds from '../bot_creds.json' assert { type: 'json' };
 import { handleButton } from './button_handler.js';
 import { allServerData, client } from './global-stuff.js';
 import { replaceLinkWithEmbed } from './embed_features/message_to_embed.js';
-import GuildStuff from './custom_classes/server.js';
+import { GuildStuff } from './custom_classes/server.js';
+import { restoreServerSettings } from './backups.js';
 
 client.on(Events.ClientReady, () => {
     console.log('\nBot is ready!');
 
+    restoreServerSettings();
+
     client.guilds.cache.forEach((guild) => {
+        // read backup file
+        // if file doesn't exist create new GuildStuff
+        // if file does exist read data from file
+
+        if (allServerData.has(guild.id)) {
+            return;
+        }
         allServerData.set(
             guild.id,
             new GuildStuff(guild, '⭐', 3, null, new Collection())

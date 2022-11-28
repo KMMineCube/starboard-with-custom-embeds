@@ -1,4 +1,5 @@
-import { Emoji, TextChannel } from 'discord.js';
+import { Snowflake, TextChannel } from 'discord.js';
+import { client } from '../global-stuff.js';
 
 class ChannelStuff {
     public readonly channel: TextChannel;
@@ -30,13 +31,21 @@ class ChannelStuff {
         this._enabled = enabled;
     }
 
-    public static fromJSON(json: string): ChannelStuff {
-        const obj = JSON.parse(json);
-        return new ChannelStuff(obj.channel, obj.starEmoji, obj.starThreshold);
+    public static fromJSON(obj: ChannelStuffBackup): ChannelStuff {
+        // get channel from channelId
+
+        const channel = client.channels.cache.get(obj.channelId) as TextChannel;
+
+        return new ChannelStuff(channel, obj.starEmoji, obj.starThreshold, obj.enabled);
     }
 
-    public toJSON(): string {
-        return JSON.stringify(this);
+    public toJSON(): ChannelStuffBackup {
+        return {
+            channelId: this.channel.id,
+            starEmoji: this._starEmoji,
+            starThreshold: this._starThreshold,
+            enabled: this._enabled
+        };
     }
 
     public setStarEmoji(emoji: string): void {
@@ -52,4 +61,11 @@ class ChannelStuff {
     }
 }
 
-export default ChannelStuff;
+type ChannelStuffBackup = {
+    channelId: Snowflake;
+    starEmoji: string;
+    starThreshold: number;
+    enabled: boolean;
+};
+
+export { ChannelStuff, ChannelStuffBackup };

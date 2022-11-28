@@ -11,7 +11,6 @@ async function composeInstagramEmbed(
     //get data from instagram link
     const jsonData = await (await fetch(instagramLink + '?__a=1&__d=dis')).json();
     if (!jsonData.graphql) return undefined;
-    // console.log(jsonData);
     const jsonDataArray = jsonData.graphql.shortcode_media;
     const media = jsonDataArray.edge_sidecar_to_children?.edges;
     // get number of images in post

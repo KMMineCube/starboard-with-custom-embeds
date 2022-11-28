@@ -3,11 +3,14 @@ import {
     Collection,
     TextChannel,
     MessageReaction,
-    PartialMessageReaction
+    PartialMessageReaction,
+    Snowflake
 } from 'discord.js';
-import ChannelStuff from './channel.js';
+import { ChannelStuff, ChannelStuffBackup } from './channel.js';
 import { ChannelId } from '../utilities.js';
 import { starboardEmbed } from '../embed_features/custom_embeds.js';
+import { backupServerSettings } from '../backups.js';
+import { client } from '../global-stuff.js';
 
 class GuildStuff {
     public readonly guild: Guild;
@@ -48,14 +51,17 @@ class GuildStuff {
 
     public setStarboardChannel(channel: TextChannel | null): void {
         this._starboardChannel = channel;
+        backupServerSettings(this.guild.id);
     }
 
     public setDefaultStarEmoji(emoji: string): void {
         this._defaultStarEmoji = emoji;
+        backupServerSettings(this.guild.id);
     }
 
     public setDefaultStarThreshold(threshold: number): void {
         this._defaultStarThreshold = threshold;
+        backupServerSettings(this.guild.id);
     }
 
     public setChannelOverride(
@@ -68,6 +74,7 @@ class GuildStuff {
             channel.id,
             new ChannelStuff(channel, starEmoji, starThreshold, enabled)
         );
+        backupServerSettings(this.guild.id);
     }
 
     public handleReaction(reaction: MessageReaction | PartialMessageReaction): boolean {
@@ -105,20 +112,59 @@ class GuildStuff {
         return false;
     }
 
-    public static fromJSON(json: string): GuildStuff {
-        const obj = JSON.parse(json);
+    public static fromJSON(obj: GuildStuffBackup): GuildStuff {
+        const guild = client.guilds.cache.get(obj.guildId);
+        if (!guild) {
+            throw new Error('Guild not found');
+        }
+        const starboardChannel = obj.starboardChannelId
+            ? (guild.channels.cache.get(obj.starboardChannelId) as TextChannel)
+            : null;
+
+        const customSettingsChannels = new Collection<ChannelId, ChannelStuff>();
+        obj.customSettingsChannels.forEach((value) => {
+            const channel = guild.channels.cache.get(value.channelId);
+            if (channel) {
+                customSettingsChannels.set(
+                    value.channelId,
+                    new ChannelStuff(
+                        channel as TextChannel,
+                        value.starEmoji,
+                        value.starThreshold,
+                        value.enabled
+                    )
+                );
+            }
+        });
+
         return new GuildStuff(
-            obj.guild,
+            guild,
             obj.defaultStarEmoji,
             obj.defaultStarThreshold,
-            obj.starboardChannel,
-            obj.customSettingsChannels
+            starboardChannel,
+            customSettingsChannels
         );
     }
 
-    public toJSON(): string {
-        return JSON.stringify(this);
+    public toJSON(): GuildStuffBackup {
+        return {
+            guildId: this.guild.id,
+            defaultStarEmoji: this._defaultStarEmoji,
+            defaultStarThreshold: this._defaultStarThreshold,
+            starboardChannelId: this._starboardChannel?.id ?? null,
+            customSettingsChannels: this._customSettingsChannels.map((value) =>
+                value.toJSON()
+            )
+        };
     }
 }
 
-export default GuildStuff;
+type GuildStuffBackup = {
+    guildId: Snowflake;
+    defaultStarEmoji: string;
+    defaultStarThreshold: number;
+    starboardChannelId: Snowflake | null;
+    customSettingsChannels: ChannelStuffBackup[];
+};
+
+export { GuildStuff, GuildStuffBackup };
