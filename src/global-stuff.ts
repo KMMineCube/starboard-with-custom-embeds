@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Collection } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, Partials } from 'discord.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { extendedClient } from './custom_classes/extended_client.js';
@@ -10,6 +10,12 @@ const baseClient: Client<true> = new Client({
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.Guilds,
         GatewayIntentBits.MessageContent
+    ],
+    partials: [
+        Partials.Message,
+        Partials.Reaction,
+        Partials.User,
+        Partials.Channel
     ]
 });
 

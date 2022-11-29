@@ -77,6 +77,11 @@ class GuildStuff {
         backupServerSettings(this.guild.id);
     }
 
+    public removeChannelOverride(channel: TextChannel): void {
+        this._customSettingsChannels.delete(channel.id);
+        backupServerSettings(this.guild.id);
+    }
+
     public handleReaction(reaction: MessageReaction | PartialMessageReaction): boolean {
         // if message is in starboard channel, ignore
         if (reaction.message.channel.id === this._starboardChannel?.id) {
