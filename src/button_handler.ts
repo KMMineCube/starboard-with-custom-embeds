@@ -3,7 +3,7 @@ import {
     getSourceLinkFromHootBotEmbed,
     getPageNumbersFromHootBotEmbed,
     searchAndEmbedCollection
-} from './utilities.js';
+} from './embed_features/embed_utils.js';
 
 /**
  * Handles button interactions.
