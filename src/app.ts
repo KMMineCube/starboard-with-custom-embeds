@@ -70,7 +70,7 @@ client.on(Events.GuildEmojiDelete, (emoji) => {
 });
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
-    if(reaction.partial) {
+    if (reaction.partial) {
         try {
             reaction = await reaction.fetch();
         } catch (error) {

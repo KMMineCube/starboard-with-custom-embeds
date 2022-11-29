@@ -2,22 +2,22 @@ import { BaseMessageOptions, Message, User } from 'discord.js';
 import { notEmpty } from '../utilities.js';
 import { generic_custom_embed } from './custom_embeds.js';
 
-async function composeTwitterEmbed(
+async function composePixivEmbed(
     link: string,
     message: string,
     sender: User,
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
-    // replace twitter links with vxtwitter links
+    // replace pixiv links with fxpixiv links
     const newContent = message.replace(
-        new RegExp(/(?:mobile.)?twitter\.com/, 'g'),
-        'vxtwitter.com'
+        new RegExp(/(?:mobile.)?pixiv\.com/, 'g'),
+        'fxpixiv.com'
     );
 
     return { content: newContent };
 }
 
-async function searchForTwitterLink(message: Message | string): Promise<string[]> {
+async function searchForPixivLink(message: Message | string): Promise<string[]> {
     const content = message instanceof Message ? message.content : message;
 
     // search for link and get the link with the character preceding it, if it exists
@@ -26,26 +26,21 @@ async function searchForTwitterLink(message: Message | string): Promise<string[]
     }
     const userLinks =
         [
-            ...content.matchAll(
-                /(?<=\s|^)https:\/\/(?:mobile.)?twitter\.com(\/.+\/status\/\S+)/g
-            )
+            ...content.matchAll(/https:\/\/(?:mobile.)?pixiv\.com(\/.+\/artworks\/\S+)/g)
         ].map((match) => match[0]) ?? new Array<string>();
 
-    // check if the link is wrapped by <>
-
-    userLinks.filter((link) => !(link.startsWith('<') && link.endsWith('>')));
-
-    const pureTwitterLinks = userLinks
+    // remove mobile. from the link
+    const purePixivLinks = userLinks
         .map((link) =>
             link.match(
-                /(https:\/\/(?:mobile.)?twitter\.com\/[a-zA-Z0-9_]+\/status\/[0-9]+)/
+                /(https:\/\/(?:mobile.)?pixiv\.com\/[a-zA-Z0-9_]+\/artworks\/[0-9]+)/
             )
         )
         .filter(notEmpty)
         .map((link) => link[0]);
 
-    if (!pureTwitterLinks) return [];
-    return pureTwitterLinks;
+    if (!userLinks) return [];
+    return userLinks;
 }
 
-export { searchForTwitterLink, composeTwitterEmbed };
+export { searchForPixivLink, composePixivEmbed as composeTwitterEmbed };

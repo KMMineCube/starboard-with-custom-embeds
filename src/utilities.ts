@@ -1,8 +1,4 @@
-import {
-    ChatInputCommandInteraction,
-    SlashCommandBuilder,
-    Snowflake
-} from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake } from 'discord.js';
 
 function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
     return value !== null && value !== undefined;
@@ -15,10 +11,4 @@ type commandData = {
 
 type ChannelId = Snowflake;
 
-
-
-export {
-    notEmpty,
-    ChannelId,
-    commandData
-};
+export { notEmpty, ChannelId, commandData };

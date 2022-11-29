@@ -49,9 +49,13 @@ async function searchForInstagramLink(message: Message | string): Promise<string
     const content = message instanceof Message ? message.content : message;
 
     const userLinks = [
-        ...content.matchAll(/https:\/\/www\.instagram\.com\/p\/[a-zA-Z0-9_-]+\/?/g),
-        ...content.matchAll(/https:\/\/instagram\.com\/p\/[a-zA-Z0-9_-]+\/\w+[^\s]/g),
-        ...content.matchAll(/https:\/\/instagr\.am\/p\/[a-zA-Z0-9_-]+\/?/g)
+        ...content.matchAll(
+            /(?<=\s|^)https:\/\/www\.instagram\.com\/p\/[a-zA-Z0-9_-]+\/?/g
+        ),
+        ...content.matchAll(
+            /(?<=\s|^)https:\/\/instagram\.com\/p\/[a-zA-Z0-9_-]+\/\w+[^\s]/g
+        ),
+        ...content.matchAll(/(?<=\s|^)https:\/\/instagr\.am\/p\/[a-zA-Z0-9_-]+\/?/g)
     ].map((match) => match[0]);
 
     if (!userLinks) return [];
@@ -59,12 +63,15 @@ async function searchForInstagramLink(message: Message | string): Promise<string
     //check if the link is wrapped by <>
     userLinks.filter((link) => !(link.startsWith('<') && link.endsWith('>')));
 
+    // convert all links to the format https://www.instagram.com/p/shortcode/
     const pureInstagramLinks = userLinks
-        .map((link) =>
-            link.match(/(https:\/\/www\.instagram\.com\/p\/[a-zA-Z0-9_-]+\/?)/)
-        )
-        .filter(notEmpty)
-        .map((link) => link[0]);
+        .map((link) => {
+            // get the shortcode from the link
+            const shortcode = link.match(/\/p\/([a-zA-Z0-9_-]+)\/?/);
+            if (!shortcode) return null;
+            return 'https://www.instagram.com/p/' + shortcode[1] + '/';
+        })
+        .filter(notEmpty);
 
     return pureInstagramLinks;
 }
