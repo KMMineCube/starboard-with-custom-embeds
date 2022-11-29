@@ -1,6 +1,5 @@
 import { Collection, Events } from 'discord.js';
 
-import bot_creds from '../bot_creds.json' assert { type: 'json' };
 import { handleButton } from './button_handler.js';
 import { allServerData, client } from './global-stuff.js';
 import { replaceLinkWithEmbed } from './embed_features/message_to_embed.js';
@@ -28,16 +27,6 @@ client.on(Events.ClientReady, () => {
 
     client.deployCommands();
 });
-
-client
-    .login(bot_creds.token)
-    .then(() => {
-        console.log(`Logged in as ${client.user.username}!`);
-    })
-    .catch((err: Error) => {
-        console.error('Login Unsuccessful. Check credentials.');
-        throw err;
-    });
 
 client.on(Events.MessageCreate, async (message) => {
     await replaceLinkWithEmbed(message);
@@ -81,6 +70,15 @@ client.on(Events.GuildEmojiDelete, (emoji) => {
 });
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
+    if(reaction.partial) {
+        try {
+            reaction = await reaction.fetch();
+        } catch (error) {
+            console.error('Something went wrong when fetching the message: ', error);
+            return;
+        }
+    }
+
     const server = allServerData.get(reaction.message.guildId ?? '');
     if (server === undefined) {
         return;
