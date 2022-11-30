@@ -1,7 +1,7 @@
 import { Message, User, BaseMessageOptions, Embed, Snowflake } from 'discord.js';
-import { searchForInstagramLink, composeInstagramEmbed } from './instagram_stuff.js';
-import { searchForRedditLink, composeRedditEmbed } from './reddit_stuff.js';
-import { searchForTwitterLink, composeTwitterEmbed } from './twitter_stuff.js';
+import { searchForInstagramLink, composeInstagramEmbed } from './instagram-stuff.js';
+import { searchForRedditLink, composeRedditEmbed } from './reddit-stuff.js';
+import { searchForTwitterLink, composeTwitterEmbed } from './twitter-stuff.js';
 
 type searchForLinkCallback = (link: Message | string) => Promise<string[]>;
 
