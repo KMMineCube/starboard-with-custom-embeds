@@ -8,7 +8,7 @@ import {
 } from 'discord.js';
 import { ChannelStuff, ChannelStuffBackup } from './channel.js';
 import { ChannelId } from '../utilities.js';
-import { starboardEmbed } from '../embed_features/custom_embeds.js';
+import { starboardEmbed } from '../embed-features/custom-embeds.js';
 import { backupServerSettings } from '../backups.js';
 import { client } from '../global-stuff.js';
 

@@ -1,9 +1,9 @@
 import { Collection, Events } from 'discord.js';
 
-import { handleButton } from './button_handler.js';
+import { handleButton } from './button-handler.js';
 import { allServerData, client } from './global-stuff.js';
-import { replaceLinkWithEmbed } from './embed_features/message_to_embed.js';
-import { GuildStuff } from './custom_classes/server.js';
+import { replaceLinkWithEmbed } from './embed-features/message-to-embed.js';
+import { GuildStuff } from './custom-classes/server.js';
 import { restoreServerSettings } from './backups.js';
 
 client.on(Events.ClientReady, () => {

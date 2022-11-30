@@ -11,7 +11,7 @@ import {
     PartialMessage,
     User
 } from 'discord.js';
-import { getSenderIdFromHootBotEmbed } from './embed_utils.js';
+import { getSenderIdFromHootBotEmbed } from './embed-utils.js';
 
 /**
  * Creates a custom hootbot embed

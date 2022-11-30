@@ -2,7 +2,7 @@
 
 import { Collection, Snowflake } from 'discord.js';
 import path from 'path';
-import { GuildStuff, GuildStuffBackup } from './custom_classes/server.js';
+import { GuildStuff, GuildStuffBackup } from './custom-classes/server.js';
 import { allServerData, _src_dirname } from './global-stuff.js';
 
 import fs from 'node:fs';

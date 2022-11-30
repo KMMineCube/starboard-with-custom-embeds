@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { searchAndEmbedCollection } from './embed_utils.js';
+import { searchAndEmbedCollection } from './embed-utils.js';
 
 /**
  * Function to replace a user-sent message that contains a media link with a custom embed

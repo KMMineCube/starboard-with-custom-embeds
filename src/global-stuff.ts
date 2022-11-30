@@ -1,8 +1,8 @@
 import { Client, GatewayIntentBits, Collection, Partials } from 'discord.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { extendedClient } from './custom_classes/extended_client.js';
-import { GuildStuff } from './custom_classes/server.js';
+import { extendedClient } from './custom-classes/extended-client.js';
+import { GuildStuff } from './custom-classes/server.js';
 
 import bot_creds from '../bot_creds.json' assert { type: 'json' };
 
