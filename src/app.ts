@@ -85,7 +85,6 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
 
     // check if messages is already in the starboard
     const list = starboardMessages.get(reaction.message.guildId ?? '');
-    console.log(list);
     if (list) {
         // get message from list whose id is the same as the reaction message id
         const message = list.find((messageId) => {
