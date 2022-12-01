@@ -1,6 +1,7 @@
 import { BaseMessageOptions, Message, User } from 'discord.js';
 import { generic_custom_embed } from './custom-embeds.js';
 import { notEmpty } from '../utilities.js';
+import fetch from 'node-fetch'
 
 async function composeInstagramEmbed(
     instagramLink: string,
@@ -9,7 +10,8 @@ async function composeInstagramEmbed(
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
     //get data from instagram link
-    const jsonData = await (await fetch(instagramLink + '?__a=1&__d=dis')).json();
+    const response = await fetch(instagramLink + '?__a=1&__d=dis');
+    const jsonData = response.json() as any;
     if (!jsonData.graphql) return undefined;
     const jsonDataArray = jsonData.graphql.shortcode_media;
     const media = jsonDataArray.edge_sidecar_to_children?.edges;

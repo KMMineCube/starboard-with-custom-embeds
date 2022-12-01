@@ -1,6 +1,7 @@
 import { BaseMessageOptions, Message, User } from 'discord.js';
 import { notEmpty } from '../utilities.js';
 import { generic_custom_embed } from './custom-embeds.js';
+import fetch from 'node-fetch';
 
 /**
  * Creates a custom embed for a reddit link
@@ -16,7 +17,8 @@ async function composeRedditEmbed(
     sender: User,
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
-    const jsonData = (await fetch(redditLink + '.json')) as Response;
+    const response = await fetch(redditLink + '.json');
+    const jsonData = response as any;
 
     const jsonDataArray = (await jsonData.json()) as Array<any>;
 
