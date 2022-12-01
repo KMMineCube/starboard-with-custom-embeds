@@ -46,6 +46,6 @@ When a message on a server gets a certain number (threshold) of a certain emoji 
     - Delete a channel override for the starboard. This will remove the channel override and use the default star emoji and threshold for this channel instead
     - `channel` must be a text channel
 
-- `/view_channel_overrides`
+- `/view_server_settings`
     - View all channel overrides for the server
     - Also shows the default star emoji and threshold for the server

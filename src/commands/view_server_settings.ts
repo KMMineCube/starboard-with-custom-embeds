@@ -11,7 +11,7 @@ import { commandData } from '../utilities.js';
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('view_overrides')
+        .setName('view_server_settings')
         .setDescription('View the starboard overrides for this server.'),
     async execute(interaction: ChatInputCommandInteraction) {
         // user must have MANAGE_CHANNELS permission
