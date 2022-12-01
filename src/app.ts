@@ -1,15 +1,19 @@
 import { Collection, Events } from 'discord.js';
 
 import { handleButton } from './button-handler.js';
-import { allServerData, client } from './global-stuff.js';
+import { allServerData, client, starboardMessages } from './global-stuff.js';
 import { replaceLinkWithEmbed } from './embed-features/message-to-embed.js';
 import { GuildStuff } from './custom-classes/server.js';
-import { restoreServerSettings } from './backups.js';
+import { restoreServerSettings, restoreStarboardMessages } from './backups.js';
 
-client.on(Events.ClientReady, () => {
+import bot_creds from '../bot_creds.json' assert { type: 'json' };
+
+client.on(Events.ClientReady, async () => {
     console.log('\nBot is ready!');
 
-    restoreServerSettings();
+    await restoreServerSettings();
+
+    await restoreStarboardMessages();
 
     client.guilds.cache.forEach((guild) => {
         // read backup file
@@ -79,9 +83,34 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
         }
     }
 
+    // check if messages is already in the starboard
+    const list = starboardMessages.get(reaction.message.guildId ?? '');
+    console.log(list);
+    if (list) {
+        // get message from list whose id is the same as the reaction message id
+        const message = list.find((messageId) => {
+            return messageId === reaction.message.id;
+        });
+
+        // If already in starboard return
+        if (message !== undefined) {
+            return;
+        }
+    }
+
     const server = allServerData.get(reaction.message.guildId ?? '');
     if (server === undefined) {
         return;
     }
     server.handleReaction(reaction);
 });
+
+client
+    .login(bot_creds.token)
+    .then(() => {
+        console.log(`Logged in as ${client.user.username}!`);
+    })
+    .catch((err: Error) => {
+        console.error('Login Unsuccessful. Check credentials.');
+        throw err;
+    });

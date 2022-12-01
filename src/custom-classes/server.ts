@@ -9,8 +9,8 @@ import {
 import { ChannelStuff, ChannelStuffBackup } from './channel.js';
 import { ChannelId } from '../utilities.js';
 import { starboardEmbed } from '../embed-features/custom-embeds.js';
-import { backupServerSettings } from '../backups.js';
-import { client } from '../global-stuff.js';
+import { appendNewStarboardMessageId, backupServerSettings } from '../backups.js';
+import { client, starboardMessages } from '../global-stuff.js';
 
 class GuildStuff {
     public readonly guild: Guild;
@@ -87,7 +87,6 @@ class GuildStuff {
         if (reaction.message.channel.id === this._starboardChannel?.id) {
             return false;
         }
-
         // check for channel overrides
         const channelOverride = this._customSettingsChannels.get(
             reaction.message.channel.id
@@ -95,14 +94,16 @@ class GuildStuff {
         if (this._starboardChannel === null) {
             return false;
         }
+
+        let approvedForStarboard = false;
+
         if (channelOverride) {
             if (channelOverride.enabled) {
                 if (
                     reaction.emoji.name === channelOverride.starEmoji &&
                     reaction.count === channelOverride.starThreshold
                 ) {
-                    this._starboardChannel.send(starboardEmbed(reaction.message));
-                    return true;
+                    approvedForStarboard = true;
                 }
             }
         } else {
@@ -110,9 +111,21 @@ class GuildStuff {
                 reaction.emoji.name === this._defaultStarEmoji &&
                 reaction.count === this._defaultStarThreshold
             ) {
-                this._starboardChannel.send(starboardEmbed(reaction.message));
-                return true;
+                approvedForStarboard = true;
             }
+        }
+
+        if (approvedForStarboard) {
+            this._starboardChannel.send(starboardEmbed(reaction.message));
+            const oldList = starboardMessages.get(this.guild.id);
+            if (oldList) {
+                oldList.push(reaction.message.id);
+                starboardMessages.set(this.guild.id, oldList);
+            } else {
+                starboardMessages.set(this.guild.id, [reaction.message.id]);
+            }
+            appendNewStarboardMessageId(this.guild.id, reaction.message.id);
+            return true;
         }
         return false;
     }

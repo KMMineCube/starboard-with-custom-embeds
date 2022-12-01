@@ -3,7 +3,12 @@
 import { Collection, Snowflake } from 'discord.js';
 import path from 'path';
 import { GuildStuff, GuildStuffBackup } from './custom-classes/server.js';
-import { allServerData, _src_dirname } from './global-stuff.js';
+import {
+    allServerData,
+    client,
+    starboardMessages,
+    _src_dirname
+} from './global-stuff.js';
 
 import fs from 'node:fs';
 
@@ -53,4 +58,61 @@ async function restoreServerSettings(): Promise<void> {
     });
 }
 
-export { backupServerSettings, restoreServerSettings };
+async function appendNewStarboardMessageId(
+    guildId: Snowflake,
+    messageId: Snowflake
+): Promise<void> {
+    const backupFile = path.join(_src_dirname, '../../backups', `${guildId}_lib_msg.txt`);
+
+    // create file if it doesn't exist already
+
+    fs.writeFile(backupFile, messageId + '\n', { flag: 'a', encoding: 'utf8' }, (err) => {
+        if (err) {
+            console.error(err);
+        }
+    });
+}
+
+async function isInStarboardDatabase(
+    guildId: Snowflake,
+    messageId: Snowflake
+): Promise<boolean> {
+    const backupFile = path.join(_src_dirname, '../../backups', `${guildId}_lib_msg.txt`);
+
+    if (!fs.existsSync(backupFile)) {
+        return false;
+    }
+
+    const data = fs.readFileSync(backupFile, { encoding: 'utf8' });
+    const lines = data.split('\n');
+    return lines.includes(messageId);
+}
+
+async function restoreStarboardMessages(): Promise<void> {
+    client.guilds.cache.forEach((guild) => {
+        const guildId = guild.id;
+        const backupFile = path.join(
+            _src_dirname,
+            '../../backups',
+            `${guildId}_lib_msg.txt`
+        );
+
+        if (!fs.existsSync(backupFile)) {
+            return;
+        }
+
+        const data = fs.readFileSync(backupFile, { encoding: 'utf8' });
+        const lines = data.split('\n');
+        starboardMessages.set(guildId, lines);
+
+        console.log('Restored starboard messages for ' + guild.name);
+    });
+}
+
+export {
+    backupServerSettings,
+    restoreServerSettings,
+    appendNewStarboardMessageId,
+    isInStarboardDatabase,
+    restoreStarboardMessages
+};
