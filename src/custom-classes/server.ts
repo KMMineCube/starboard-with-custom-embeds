@@ -100,7 +100,7 @@ class GuildStuff {
         if (channelOverride) {
             if (channelOverride.enabled) {
                 if (
-                    reaction.emoji.name === channelOverride.starEmoji &&
+                    reaction.emoji.toString() === channelOverride.starEmoji &&
                     reaction.count === channelOverride.starThreshold
                 ) {
                     approvedForStarboard = true;
@@ -108,7 +108,7 @@ class GuildStuff {
             }
         } else {
             if (
-                reaction.emoji.name === this._defaultStarEmoji &&
+                reaction.emoji.toString() === this._defaultStarEmoji &&
                 reaction.count === this._defaultStarThreshold
             ) {
                 approvedForStarboard = true;

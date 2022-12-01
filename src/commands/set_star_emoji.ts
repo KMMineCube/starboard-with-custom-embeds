@@ -42,6 +42,23 @@ export default {
         }
         // set starboard channel
         const newEmoji = interaction.options.getString('emoji', true);
+
+        // check if it's a unicode emoji
+        const emoji =
+            newEmoji.match(/\p{Emoji}/u) ??
+            // check if it's a custom emote
+            // custom emoji format: <:name:id>
+            interaction.guild?.emojis.cache.find((emoji) => {
+                return `<:${emoji.name}:${emoji.id}>` === newEmoji;
+            });
+        if (!emoji) {
+            await interaction.reply({
+                content: 'Invalid emoji.',
+                ephemeral: true
+            });
+            return;
+        }
+
         server.setDefaultStarEmoji(newEmoji);
         await interaction.reply(
             `Default star emoji set to ${newEmoji}. Specific channel overrides have not been updated.`
