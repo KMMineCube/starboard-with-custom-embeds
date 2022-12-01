@@ -103,6 +103,8 @@ async function restoreStarboardMessages(): Promise<void> {
 
         const data = fs.readFileSync(backupFile, { encoding: 'utf8' });
         const lines = data.split('\n');
+        // reverse the array so that the newest message is first
+        lines.reverse();
         starboardMessages.set(guildId, lines);
 
         console.log('Restored starboard messages for ' + guild.name);

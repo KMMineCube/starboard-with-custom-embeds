@@ -118,8 +118,11 @@ class GuildStuff {
         if (approvedForStarboard) {
             this._starboardChannel.send(starboardEmbed(reaction.message));
             const oldList = starboardMessages.get(this.guild.id);
+
+            // append the new message to the front of the list
+
             if (oldList) {
-                oldList.push(reaction.message.id);
+                oldList.unshift(reaction.message.id);
                 starboardMessages.set(this.guild.id, oldList);
             } else {
                 starboardMessages.set(this.guild.id, [reaction.message.id]);
