@@ -72,6 +72,16 @@ export default {
             const newStarThreshold =
                 interaction.options.getInteger('star_threshold') ??
                 server.defaultStarThreshold;
+
+            // check if it's a valid threshold
+            if (newStarThreshold < 1) {
+                await interaction.reply({
+                    content: 'Threshold must be at least 1.',
+                    ephemeral: true
+                });
+                return;
+            }
+
             const newEnabled = interaction.options.getBoolean('enabled') ?? true;
             server.setChannelOverride(
                 newChannel as TextChannel,

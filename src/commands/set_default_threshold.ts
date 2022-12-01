@@ -40,8 +40,18 @@ export default {
             );
             return;
         }
-        // set starboard channel
+        // set threshold
         const newThreshold = interaction.options.getInteger('threshold', true);
+
+        // check if it's a valid threshold
+        if (newThreshold < 1) {
+            await interaction.reply({
+                content: 'Threshold must be at least 1.',
+                ephemeral: true
+            });
+            return;
+        }
+
         server.setDefaultStarThreshold(newThreshold);
         await interaction.reply(
             `Default star threshold set to ${newThreshold}. Specific channel overrides have not been updated.`
