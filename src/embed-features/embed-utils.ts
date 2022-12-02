@@ -1,5 +1,6 @@
 import { Message, User, BaseMessageOptions, Embed, Snowflake } from 'discord.js';
 import { searchForInstagramLink, composeInstagramEmbed } from './instagram-stuff.js';
+import { composePixivEmbed, searchForPixivLink } from './pixiv-stuff.js';
 import { searchForRedditLink, composeRedditEmbed } from './reddit-stuff.js';
 import { searchForTwitterLink, composeTwitterEmbed } from './twitter-stuff.js';
 
@@ -14,23 +15,33 @@ type composeCustomEmbedCallback = (
 
 const searchAndEmbedCollection: {
     type: string;
+    linkFix: boolean;
     searchFunction: searchForLinkCallback;
     composeEmbedFunction: composeCustomEmbedCallback;
 }[] = [
     {
         type: 'reddit',
+        linkFix: false,
         searchFunction: searchForRedditLink,
         composeEmbedFunction: composeRedditEmbed
     },
     {
         type: 'twitter',
+        linkFix: true,
         searchFunction: searchForTwitterLink,
         composeEmbedFunction: composeTwitterEmbed
     },
     {
         type: 'instagram',
+        linkFix: false,
         searchFunction: searchForInstagramLink,
         composeEmbedFunction: composeInstagramEmbed
+    },
+    {
+        type: 'pixiv',
+        linkFix: true,
+        searchFunction: searchForPixivLink,
+        composeEmbedFunction: composePixivEmbed
     }
 ];
 

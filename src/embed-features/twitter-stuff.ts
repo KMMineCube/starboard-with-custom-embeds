@@ -3,27 +3,39 @@ import { notEmpty } from '../utilities.js';
 import { generic_custom_embed } from './custom-embeds.js';
 
 async function composeTwitterEmbed(
-    link: string,
+    twitterLink: string,
     message: string,
     sender: User,
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
-    // replace twitter links with vxtwitter links
+    // replace twitter links with <link>
     const newContent = message.replace(
-        new RegExp(/(?:mobile.)?twitter\.com/, 'g'),
-        'vxtwitter.com'
+        new RegExp(twitterLink + '\\S*', 'g'),
+        '*<link>*'
     );
 
-    return { content: newContent };
+    const fixedLink = twitterLink.replace('twitter', 'fxtwitter');
+
+    const embed = generic_custom_embed(
+        'Twitter',
+        newContent,
+        fixedLink,
+        null,
+        sender,
+        0x1da1f2,
+        false
+    );
+
+    return { content: fixedLink, embeds: embed.embeds };
 }
 
 async function searchForTwitterLink(message: Message | string): Promise<string[]> {
     const content = message instanceof Message ? message.content : message;
 
     // search for link and get the link with the character preceding it, if it exists
-    if (message instanceof Message && message.embeds.length > 0) {
-        return [];
-    }
+    // if (message instanceof Message && message.embeds.length > 0) {
+    //     return [];
+    // }
     const userLinks =
         [
             ...content.matchAll(

@@ -43,8 +43,17 @@ async function replaceLinkWithEmbed(message: Message): Promise<void> {
                 }
             );
             if (!asdf) return;
-            // send reddit link to server
-            await channel.send(newEmbed);
+            // send new message
+            if(obj.linkFix) {
+                const newMsg = await channel.send(newEmbed.content ?? '');
+                await newMsg.edit({
+                    content: newMsg.content,
+                    embeds: [...newMsg.embeds, ...(newEmbed.embeds ?? [])],
+                })
+
+            } else {
+                await channel.send(newEmbed);
+            }
         }
     }
 }

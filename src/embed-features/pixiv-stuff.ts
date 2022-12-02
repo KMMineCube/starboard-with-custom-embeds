@@ -3,18 +3,30 @@ import { notEmpty } from '../utilities.js';
 import { generic_custom_embed } from './custom-embeds.js';
 
 async function composePixivEmbed(
-    link: string,
+    pixivLink: string,
     message: string,
     sender: User,
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
     // replace pixiv links with fxpixiv links
     const newContent = message.replace(
-        new RegExp(/(?:mobile.)?pixiv\.com/, 'g'),
-        'fxpixiv.com'
+        new RegExp(pixivLink + '\\S*', 'g'),
+        '*<link>*'
     );
 
-    return { content: newContent };
+    const fixedLink = pixivLink.replace('pixiv', 'fxpixiv');
+
+    const embed = generic_custom_embed(
+        'Pixiv',
+        newContent,
+        fixedLink,
+        null,
+        sender,
+        0x0096FA,
+        false
+    );
+
+    return { content: fixedLink, embeds: embed.embeds };
 }
 
 async function searchForPixivLink(message: Message | string): Promise<string[]> {
@@ -29,18 +41,8 @@ async function searchForPixivLink(message: Message | string): Promise<string[]> 
             ...content.matchAll(/https:\/\/(?:mobile.)?pixiv\.com(\/.+\/artworks\/\S+)/g)
         ].map((match) => match[0]) ?? new Array<string>();
 
-    // remove mobile. from the link
-    const purePixivLinks = userLinks
-        .map((link) =>
-            link.match(
-                /(https:\/\/(?:mobile.)?pixiv\.com\/[a-zA-Z0-9_]+\/artworks\/[0-9]+)/
-            )
-        )
-        .filter(notEmpty)
-        .map((link) => link[0]);
-
     if (!userLinks) return [];
     return userLinks;
 }
 
-export { searchForPixivLink, composePixivEmbed as composeTwitterEmbed };
+export { searchForPixivLink, composePixivEmbed };
