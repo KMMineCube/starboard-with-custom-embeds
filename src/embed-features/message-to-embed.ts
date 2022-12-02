@@ -36,7 +36,13 @@ async function replaceLinkWithEmbed(message: Message): Promise<void> {
         );
         if (newEmbed) {
             // delete original message
-            await message.delete();
+            const asdf = await message.delete().catch(
+                (err) => {
+                    console.log(`Error deleting message: ${err}`)
+                    return undefined;
+                }
+            );
+            if (!asdf) return;
             // send reddit link to server
             await channel.send(newEmbed);
         }

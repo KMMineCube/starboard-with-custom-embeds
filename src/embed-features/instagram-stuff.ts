@@ -10,7 +10,13 @@ async function composeInstagramEmbed(
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
     //get data from instagram link
-    const response = await fetch(instagramLink + '?__a=1&__d=dis');
+    const response = await fetch(instagramLink + '?__a=1&__d=dis').catch(
+        (err) => {
+            console.log(err);
+            return undefined;
+        }
+    );
+    if (!response) return undefined;
     const jsonData = response.json() as any;
     if (!jsonData.graphql) return undefined;
     const jsonDataArray = jsonData.graphql.shortcode_media;

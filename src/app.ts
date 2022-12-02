@@ -75,12 +75,16 @@ client.on(Events.GuildEmojiDelete, (emoji) => {
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     if (reaction.partial) {
-        try {
-            reaction = await reaction.fetch();
-        } catch (error) {
-            console.error('Something went wrong when fetching the message: ', error);
+        const fullReaction = await reaction.fetch().catch(
+            (err) => {
+                console.error('Something went wrong when fetching the message: ', err);
+                return undefined;
+            }
+        );
+        if(!fullReaction) {
             return;
         }
+        reaction = fullReaction;
     }
 
     // check if messages is already in the starboard
