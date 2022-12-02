@@ -133,7 +133,7 @@ class GuildStuff {
         return false;
     }
 
-    public static fromJSON(obj: GuildStuffBackup): GuildStuff {
+    public static async fromJSON(obj: GuildStuffBackup): Promise<GuildStuff> {
         const guild = client.guilds.cache.get(obj.guildId);
         if (!guild) {
             throw new Error('Guild not found');

@@ -46,10 +46,15 @@ async function restoreServerSettings(): Promise<void> {
             console.error(err);
         }
         const backup = JSON.parse(data) as backupData;
-        Object.keys(backup).forEach((key) => {
+        Object.keys(backup).forEach(async (key) => {
             const backupData = backup[key];
             if (backupData !== undefined) {
-                const server = GuildStuff.fromJSON(backupData);
+                const server = await GuildStuff.fromJSON(backupData).catch((err) => {
+                    console.error(err);
+                });
+                if(server === undefined) {
+                    return;
+                }
                 const guildId = server.guild.id;
                 allServerData.set(guildId, server);
                 console.log('Restored server settings for ' + server.guild.name);
