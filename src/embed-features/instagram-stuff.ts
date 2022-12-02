@@ -17,7 +17,7 @@ async function composeInstagramEmbed(
         }
     );
     if (!response) return undefined;
-    const jsonData = response.json() as any;
+    const jsonData = await response.json() as any;
     if (!jsonData.graphql) return undefined;
     const jsonDataArray = jsonData.graphql.shortcode_media;
     const media = jsonDataArray.edge_sidecar_to_children?.edges;
