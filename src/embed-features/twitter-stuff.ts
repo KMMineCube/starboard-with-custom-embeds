@@ -33,9 +33,9 @@ async function searchForTwitterLink(message: Message | string): Promise<string[]
     const content = message instanceof Message ? message.content : message;
 
     // search for link and get the link with the character preceding it, if it exists
-    // if (message instanceof Message && message.embeds.length > 0) {
-    //     return [];
-    // }
+    if (message instanceof Message && message.embeds.length > 0) {
+        return [];
+    }
     const userLinks =
         [
             ...content.matchAll(
