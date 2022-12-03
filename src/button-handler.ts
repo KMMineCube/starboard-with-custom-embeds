@@ -51,16 +51,21 @@ async function shiftPage(
     interaction: ButtonInteraction,
     direction: 'next' | 'prev'
 ): Promise<void> {
-    await interaction.deferUpdate();
     const embed = interaction.message.embeds[0];
     if (embed === undefined) {
         return;
     }
-
+    
     const [link, type] = await getSourceLinkFromHootBotEmbed(embed);
     if (link === null) {
         return;
     }
+    await interaction.update({
+        embeds: [{
+            title: 'Loading...',
+            color: embed.color ?? 0x000000
+        }]
+    });
 
     const senderId = getSenderIdFromHootBotEmbed(embed);
     const sender = await interaction.client.users.fetch(senderId ?? interaction.user);
@@ -78,7 +83,7 @@ async function shiftPage(
                 direction === 'next' ? currentPage + 1 : currentPage - 1
             );
         if (newEmbed) {
-            await interaction.update(newEmbed);
+            await interaction.message.edit(newEmbed);
         }
     } else {
         await interaction.reply({
