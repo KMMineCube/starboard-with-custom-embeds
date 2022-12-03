@@ -30,11 +30,6 @@ async function searchForPixivLink(message: Message | string): Promise<string[]> 
     const content = message instanceof Message ? message.content : message;
 
     // force wait 3 seconds before checking if message has embeds
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    if (message instanceof Message && message.embeds.length > 0) {
-        return [];
-    }
     // search for link and get the link with the character preceding it, if it exists
     const userLinks =
         [...content.matchAll(/https:\/\/www.pixiv\.net(\/.+\/artworks\/\S+)/g)].map(
@@ -42,6 +37,11 @@ async function searchForPixivLink(message: Message | string): Promise<string[]> 
         ) ?? new Array<string>();
 
     if (!userLinks) return [];
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    if (message instanceof Message && message.embeds.length > 0) {
+        return [];
+    }
     return userLinks;
 }
 

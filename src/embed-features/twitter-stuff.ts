@@ -29,19 +29,14 @@ async function composeTwitterEmbed(
 async function searchForTwitterLink(message: Message | string): Promise<string[]> {
     const content = message instanceof Message ? message.content : message;
 
-    // force wait 3 seconds before checking if message has embeds
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    if (message instanceof Message && message.embeds.length > 0) {
-        return [];
-    }
     // search for link and get the link with the character preceding it, if it exists
     const userLinks =
-        [
-            ...content.matchAll(
-                /(?<=\s|^)https:\/\/(?:mobile.)?twitter\.com(\/.+\/status\/\S+)/g
+    [
+        ...content.matchAll(
+            /(?<=\s|^)https:\/\/(?:mobile.)?twitter\.com(\/.+\/status\/\S+)/g
             )
         ].map((match) => match[0]) ?? new Array<string>();
-
+    
     // check if the link is wrapped by <>
 
     userLinks.filter((link) => !(link.startsWith('<') && link.endsWith('>')));
@@ -56,6 +51,13 @@ async function searchForTwitterLink(message: Message | string): Promise<string[]
         .map((link) => link[0]);
 
     if (!pureTwitterLinks) return [];
+
+    // force wait 3 seconds before checking if message has embeds
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    if (message instanceof Message && message.embeds.length > 0) {
+        return [];
+    }
+
     return pureTwitterLinks;
 }
 

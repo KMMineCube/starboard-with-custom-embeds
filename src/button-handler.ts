@@ -51,6 +51,7 @@ async function shiftPage(
     interaction: ButtonInteraction,
     direction: 'next' | 'prev'
 ): Promise<void> {
+    await interaction.deferUpdate();
     const embed = interaction.message.embeds[0];
     if (embed === undefined) {
         return;

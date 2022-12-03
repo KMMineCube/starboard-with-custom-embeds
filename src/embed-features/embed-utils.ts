@@ -31,12 +31,13 @@ const searchAndEmbedCollection: {
         searchFunction: searchForTwitterLink,
         composeEmbedFunction: composeTwitterEmbed
     },
-    {
-        type: 'instagram',
-        linkFix: false,
-        searchFunction: searchForInstagramLink,
-        composeEmbedFunction: composeInstagramEmbed
-    },
+    // ! removing instagram until fix is found
+    // {
+    //     type: 'instagram',
+    //     linkFix: false,
+    //     searchFunction: searchForInstagramLink,
+    //     composeEmbedFunction: composeInstagramEmbed
+    // },
     {
         type: 'pixiv',
         linkFix: true,
