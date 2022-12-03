@@ -211,7 +211,8 @@ function starboardEmbedFromBot(message: Message | PartialMessage): BaseMessageOp
     const newBotEmbed = new EmbedBuilder(newBotEmbedJSON);
 
     return {
-        embeds: [newBotEmbed]
+        embeds: [newBotEmbed, ...message.embeds.slice(1)],
+        files: [...message.attachments.values()]
     };
 }
 
