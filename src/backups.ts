@@ -52,7 +52,7 @@ async function restoreServerSettings(): Promise<void> {
                 const server = await GuildStuff.fromJSON(backupData).catch((err) => {
                     console.error(err);
                 });
-                if(server === undefined) {
+                if (server === undefined) {
                     return;
                 }
                 const guildId = server.guild.id;

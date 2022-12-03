@@ -9,10 +9,7 @@ async function composeTwitterEmbed(
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
     // replace twitter links with <link>
-    const newContent = message.replace(
-        new RegExp(twitterLink + '\\S*', 'g'),
-        '*<link>*'
-    );
+    const newContent = message.replace(new RegExp(twitterLink + '\\S*', 'g'), '*<link>*');
 
     const fixedLink = twitterLink.replace('twitter', 'fxtwitter');
 

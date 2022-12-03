@@ -17,12 +17,10 @@ async function composeRedditEmbed(
     sender: User,
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
-    const response = await fetch(redditLink + '.json').catch(
-        (err) => {
-            console.log(err);
-            return undefined;
-        }
-    );
+    const response = await fetch(redditLink + '.json').catch((err) => {
+        console.log(err);
+        return undefined;
+    });
     if (!response) return undefined;
     const jsonData = response as any;
 

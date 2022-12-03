@@ -9,10 +9,7 @@ async function composePixivEmbed(
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
     // replace pixiv links with fxpixiv links
-    const newContent = message.replace(
-        new RegExp(pixivLink + '\\S*', 'g'),
-        '*<link>*'
-    );
+    const newContent = message.replace(new RegExp(pixivLink + '\\S*', 'g'), '*<link>*');
 
     const fixedLink = pixivLink.replace('pixiv', 'fxpixiv');
 
@@ -22,7 +19,7 @@ async function composePixivEmbed(
         fixedLink,
         null,
         sender,
-        0x0096FA,
+        0x0096fa,
         false
     );
 
@@ -37,9 +34,9 @@ async function searchForPixivLink(message: Message | string): Promise<string[]> 
         return [];
     }
     const userLinks =
-        [
-            ...content.matchAll(/https:\/\/(?:mobile.)?pixiv\.com(\/.+\/artworks\/\S+)/g)
-        ].map((match) => match[0]) ?? new Array<string>();
+        [...content.matchAll(/https:\/\/www.pixiv\.net(\/.+\/artworks\/\S+)/g)].map(
+            (match) => match[0]
+        ) ?? new Array<string>();
 
     if (!userLinks) return [];
     return userLinks;

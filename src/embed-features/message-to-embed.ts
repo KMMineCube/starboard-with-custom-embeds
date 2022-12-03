@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { EmbedBuilder, Message } from 'discord.js';
 import { searchAndEmbedCollection } from './embed-utils.js';
 
 /**
@@ -36,21 +36,29 @@ async function replaceLinkWithEmbed(message: Message): Promise<void> {
         );
         if (newEmbed) {
             // delete original message
-            const asdf = await message.delete().catch(
-                (err) => {
-                    console.log(`Error deleting message: ${err}`)
-                    return undefined;
-                }
-            );
+            const asdf = await message.delete().catch((err) => {
+                console.log(`Error deleting message: ${err}`);
+                return undefined;
+            });
             if (!asdf) return;
             // send new message
-            if(obj.linkFix) {
+            if (obj.linkFix) {
                 const newMsg = await channel.send(newEmbed.content ?? '');
-                await newMsg.edit({
-                    content: newMsg.content,
-                    embeds: [...newMsg.embeds, ...(newEmbed.embeds ?? [])],
-                })
-
+                //move thumbnail image to image
+                const combinedMsg = newMsg as Message;
+                if (combinedMsg !== undefined && combinedMsg.embeds[0] !== undefined) {
+                    const embed = new EmbedBuilder(combinedMsg.embeds[0].data);
+                    embed.setImage(
+                        combinedMsg.embeds[0].thumbnail?.url ??
+                            combinedMsg.embeds[0].image?.url ??
+                            ''
+                    );
+                    embed.setThumbnail(null);
+                    combinedMsg.edit({
+                        content: '',
+                        embeds: [...(newEmbed.embeds ?? []), embed]
+                    });
+                }
             } else {
                 await channel.send(newEmbed);
             }

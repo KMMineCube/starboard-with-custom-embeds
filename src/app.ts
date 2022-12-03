@@ -33,6 +33,7 @@ client.on(Events.ClientReady, async () => {
 });
 
 client.on(Events.MessageCreate, async (message) => {
+    if (message.author.bot) return;
     await replaceLinkWithEmbed(message);
 });
 
@@ -75,13 +76,11 @@ client.on(Events.GuildEmojiDelete, (emoji) => {
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     if (reaction.partial) {
-        const fullReaction = await reaction.fetch().catch(
-            (err) => {
-                console.error('Something went wrong when fetching the message: ', err);
-                return undefined;
-            }
-        );
-        if(!fullReaction) {
+        const fullReaction = await reaction.fetch().catch((err) => {
+            console.error('Something went wrong when fetching the message: ', err);
+            return undefined;
+        });
+        if (!fullReaction) {
             return;
         }
         reaction = fullReaction;
