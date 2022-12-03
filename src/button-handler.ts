@@ -2,7 +2,8 @@ import { ButtonInteraction, GuildMember, PermissionsBitField } from 'discord.js'
 import {
     getSourceLinkFromHootBotEmbed,
     getPageNumbersFromHootBotEmbed,
-    searchAndEmbedCollection
+    searchAndEmbedCollection,
+    getSenderIdFromHootBotEmbed
 } from './embed-features/embed-utils.js';
 
 /**
@@ -60,6 +61,9 @@ async function shiftPage(
         return;
     }
 
+    const senderId = getSenderIdFromHootBotEmbed(embed);
+    const sender = await interaction.client.users.fetch(senderId ?? interaction.user);
+
     const [currentPage, maxPage] = await getPageNumbersFromHootBotEmbed(embed);
 
     const condition = direction === 'next' ? currentPage < maxPage : currentPage > 1;
@@ -69,7 +73,7 @@ async function shiftPage(
             ?.composeEmbedFunction(
                 link,
                 embed?.description ?? '',
-                interaction.user,
+                sender,
                 direction === 'next' ? currentPage + 1 : currentPage - 1
             );
         if (newEmbed) {
