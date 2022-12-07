@@ -51,10 +51,10 @@ async function searchForTwitterLink(message: Message | string): Promise<string[]
     if (!pureTwitterLinks) return [];
 
     // force wait 3 seconds before checking if message has embeds
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
-    // if (message instanceof Message && message.embeds.length > 0) {
-    //     return [];
-    // }
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    if (message instanceof Message && message.embeds.length > 0) {
+        return [];
+    }
 
     return pureTwitterLinks;
 }
