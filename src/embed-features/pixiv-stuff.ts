@@ -1,6 +1,6 @@
 import { BaseMessageOptions, Message, User } from 'discord.js';
 import { notEmpty } from '../utilities.js';
-import { generic_custom_embed } from './custom-embeds.js';
+import { genericCustomEmbed } from './custom-embeds.js';
 
 async function composePixivEmbed(
     pixivLink: string,
@@ -13,7 +13,7 @@ async function composePixivEmbed(
 
     const fixedLink = pixivLink.replace('pixiv', 'fxpixiv');
 
-    const embed = generic_custom_embed(
+    const embed = genericCustomEmbed(
         'Pixiv',
         newContent,
         fixedLink,

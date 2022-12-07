@@ -1,18 +1,18 @@
 import { BaseMessageOptions, Message, User } from 'discord.js';
 import { notEmpty } from '../utilities.js';
-import { generic_custom_embed } from './custom-embeds.js';
+import { genericCustomEmbed } from './custom-embeds.js';
 
 async function composeTwitterEmbed(
     twitterLink: string,
     message: string,
-    sender: User,
+    sender: User
 ): Promise<BaseMessageOptions | undefined> {
     // replace twitter links with <link>
     const newContent = message.replace(new RegExp(twitterLink + '\\S*', 'g'), '*<link>*');
 
     const fixedLink = twitterLink.replace('twitter', 'fxtwitter');
 
-    const embed = generic_custom_embed(
+    const embed = genericCustomEmbed(
         'Twitter',
         newContent,
         fixedLink,

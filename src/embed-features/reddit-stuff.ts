@@ -1,6 +1,6 @@
 import { BaseMessageOptions, Message, User } from 'discord.js';
 import { notEmpty } from '../utilities.js';
-import { generic_custom_embed } from './custom-embeds.js';
+import { genericCustomEmbed as genericCustomEmbed } from './custom-embeds.js';
 import fetch from 'node-fetch';
 
 /**
@@ -34,7 +34,7 @@ async function composeRedditEmbed(
     // get number of images in post
     const numImages = mediaData.gallery_data?.items.length ?? 1;
 
-    let is_video = mediaData.is_video ?? false;
+    let isVideo = mediaData.is_video ?? false;
 
     // get reddit post image
     let imageLink: string | null;
@@ -44,7 +44,7 @@ async function composeRedditEmbed(
     }
 
     // if reddit post is a video, get the video link
-    if (is_video) {
+    if (isVideo) {
         imageLink = null;
         // imageLink = mediaData.media.reddit_video.fallback_url;
     } else if (numImages === 1) {
@@ -74,9 +74,20 @@ async function composeRedditEmbed(
     //replace &amp; with & in image link
     const imageLinkFixed = imageLink.replace(/&amp;/g, '&') ?? null;
 
+    const postInfo = (
+        '\n\n' +
+        `⬆️ **${mediaData.ups}** ⬇️` +
+        `\n💬 **${mediaData.num_comments}**`
+    ).substring(0, 2048);
+
+    const title = (mediaData.title + ` - posted by **u/${mediaData.author}*`).substring(
+        0,
+        256
+    );
+
     // get reddit post title
-    const embed = generic_custom_embed(
-        'Reddit Post',
+    const embed = genericCustomEmbed(
+        title ?? 'Reddit',
         newContent,
         redditLink,
         imageLinkFixed,
@@ -84,7 +95,8 @@ async function composeRedditEmbed(
         0xff4500,
         numImages > 1,
         pageNumber,
-        numImages
+        numImages,
+        postInfo
     );
     if (imageLink === null) {
         return undefined;

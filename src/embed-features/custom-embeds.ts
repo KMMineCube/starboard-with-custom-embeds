@@ -26,7 +26,7 @@ import { getSenderIdFromHootBotEmbed } from './embed-utils.js';
  * @param maxPageNumber
  * @returns
  */
-function generic_custom_embed(
+function genericCustomEmbed(
     title: string,
     description: string,
     url: string,
@@ -35,42 +35,54 @@ function generic_custom_embed(
     color: number | HexColorString,
     addButtons: boolean,
     pageNumber: number = 1,
-    maxPageNumber: number = 1
+    maxPageNumber: number = 1,
+    linkPostInfo: string | null = null
 ): BaseMessageOptions {
+    let sameLine = false;
+
     const embed = new EmbedBuilder()
         .setTitle(title)
         .setDescription(description)
         .setImage(imageLink)
-        .addFields(
-            [
-                {
-                    name: 'Sender',
-                    value: sender.toString(),
-                    inline: true
-                },
-                {
-                    name: 'Source',
-                    value: `[Click here](${url})`,
-                    inline: true
-                }
-            ].concat(
-                maxPageNumber > 1
-                    ? [
-                          {
-                              name: 'Page',
-                              value: `${pageNumber}/${maxPageNumber}`,
-                              inline: false
-                          }
-                      ]
-                    : []
-            )
-        )
+        .addFields([
+            {
+                name: 'Sender',
+                value: sender.toString(),
+                inline: true
+            },
+            {
+                name: 'Source',
+                value: `[Click here](${url})`,
+                inline: true
+            },
+            {
+                //empty field to force new field(s) to be on a new line
+                name: '\u200b',
+                value: '\u200b',
+                inline: true
+            }
+        ])
         .setFooter({
             text:
                 `HootBot v0.0.1` +
                 (addButtons ? ` | Page ${pageNumber} of ${maxPageNumber}` : ``)
         })
         .setColor(color);
+
+    if (linkPostInfo) {
+        embed.addFields({
+            name: 'Post Info',
+            value: linkPostInfo,
+            inline: true
+        });
+    }
+    if (maxPageNumber > 1) {
+        embed.addFields({
+            name: 'Page',
+            value: `${pageNumber}/${maxPageNumber}`,
+            inline: true
+        });
+    }
 
     if (addButtons) {
         const buttons = new ActionRowBuilder<ButtonBuilder>()
@@ -225,4 +237,4 @@ function starboardEmbed(message: Message | PartialMessage): BaseMessageOptions {
     }
 }
 
-export { generic_custom_embed, starboardEmbed };
+export { genericCustomEmbed, starboardEmbed };

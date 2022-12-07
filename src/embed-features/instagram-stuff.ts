@@ -1,5 +1,5 @@
 import { BaseMessageOptions, Message, User } from 'discord.js';
-import { generic_custom_embed } from './custom-embeds.js';
+import { genericCustomEmbed } from './custom-embeds.js';
 import { notEmpty } from '../utilities.js';
 import fetch from 'node-fetch';
 
@@ -36,16 +36,30 @@ async function composeInstagramEmbed(
         '*<link>*'
     );
 
-    const embed = generic_custom_embed(
-        'Instagram',
-        newContent,
+    const description = (
+        newContent +
+        '\n\n' +
+        '\n__**Post Caption**__: ' +
+        jsonDataArray.edge_media_to_caption.edges[0].node.text
+    ).slice(0, 2048); // description limit is 2048 characters
+
+    const postInfo =
+        `**${jsonDataArray.edge_media_preview_like.count}** 👍 ` +
+        `${jsonDataArray.edge_media_to_comment.count} 💬 `;
+
+    const embed = genericCustomEmbed(
+        jsonDataArray.owner.username +
+            ' at ' +
+            new Date(jsonDataArray.taken_at_timestamp * 1000).toLocaleString('en-UTC'),
+        description,
         instagramLink,
         mediaLink,
         sender,
         0xe4405f,
         numImages > 1,
         pageNumber,
-        numImages
+        numImages,
+        postInfo
     );
 
     return embed;
