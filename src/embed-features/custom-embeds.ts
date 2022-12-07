@@ -21,7 +21,7 @@ import { getSenderIdFromHootBotEmbed } from './embed-utils.js';
  * @param imageLink
  * @param sender
  * @param color
- * @param addButtons
+ * @param addPageButtons
  * @param pageNumber
  * @param maxPageNumber
  * @returns
@@ -33,13 +33,11 @@ function genericCustomEmbed(
     imageLink: string | null,
     sender: User,
     color: number | HexColorString,
-    addButtons: boolean,
+    addPageButtons: boolean,
     pageNumber: number = 1,
     maxPageNumber: number = 1,
     linkPostInfo: string | null = null
 ): BaseMessageOptions {
-    let sameLine = false;
-
     const embed = new EmbedBuilder()
         .setTitle(title)
         .setDescription(description)
@@ -64,8 +62,8 @@ function genericCustomEmbed(
         ])
         .setFooter({
             text:
-                `HootBot v0.0.1` +
-                (addButtons ? ` | Page ${pageNumber} of ${maxPageNumber}` : ``)
+                `HootBot v1.0.0` +
+                (addPageButtons ? ` | Page ${pageNumber} of ${maxPageNumber}` : ``)
         })
         .setColor(color);
 
@@ -84,8 +82,9 @@ function genericCustomEmbed(
         });
     }
 
-    if (addButtons) {
-        const buttons = new ActionRowBuilder<ButtonBuilder>()
+    const buttons = new ActionRowBuilder<ButtonBuilder>();
+    if (addPageButtons) {
+        buttons
             .addComponents(
                 new ButtonBuilder()
                     .setCustomId('prev_page')
@@ -101,18 +100,16 @@ function genericCustomEmbed(
                     .setEmoji('➡️')
                     .setLabel('Next Page')
                     .setStyle(ButtonStyle.Primary)
-            )
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId('delete')
-                    .setEmoji('🗑')
-                    .setLabel('Delete')
-                    .setStyle(ButtonStyle.Danger)
             );
-        return { embeds: [embed], components: [buttons] };
-    } else {
-        return { embeds: [embed] };
     }
+    buttons.addComponents(
+        new ButtonBuilder()
+            .setCustomId('delete')
+            .setEmoji('🗑')
+            .setLabel('Delete')
+            .setStyle(ButtonStyle.Danger)
+    );
+    return { embeds: [embed], components: [buttons] };
 }
 
 function starboardEmbedFromUser(message: Message | PartialMessage): BaseMessageOptions {
@@ -135,7 +132,7 @@ function starboardEmbedFromUser(message: Message | PartialMessage): BaseMessageO
             iconURL: message.author?.avatarURL() ?? undefined
         })
         .setFooter({
-            text: `HootBot v0.0.1`
+            text: `HootBot v1.0.0`
         })
         .setColor(Colors.Yellow);
 
