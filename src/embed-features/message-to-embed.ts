@@ -56,7 +56,8 @@ async function replaceLinkWithEmbed(message: Message): Promise<void> {
                     embed.setThumbnail(null);
                     combinedMsg.edit({
                         content: '',
-                        embeds: [...(newEmbed.embeds ?? []), embed]
+                        embeds: [...(newEmbed.embeds ?? []), embed],
+                        components: newEmbed.components
                     });
                 }
             } else {

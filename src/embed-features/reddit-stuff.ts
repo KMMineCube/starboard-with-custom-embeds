@@ -93,7 +93,6 @@ async function composeRedditEmbed(
         imageLinkFixed,
         sender,
         0xff4500,
-        numImages > 1,
         pageNumber,
         numImages,
         postInfo

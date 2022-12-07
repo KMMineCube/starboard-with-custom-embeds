@@ -32,12 +32,12 @@ const searchAndEmbedCollection: {
         composeEmbedFunction: composeTwitterEmbed
     },
     // ! removing instagram until fix is found
-    {
-        type: 'instagram',
-        linkFix: false,
-        searchFunction: searchForInstagramLink,
-        composeEmbedFunction: composeInstagramEmbed
-    },
+    // {
+    //     type: 'instagram',
+    //     linkFix: false,
+    //     searchFunction: searchForInstagramLink,
+    //     composeEmbedFunction: composeInstagramEmbed
+    // },
     {
         type: 'pixiv',
         linkFix: true,

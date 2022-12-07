@@ -19,8 +19,7 @@ async function composePixivEmbed(
         fixedLink,
         null,
         sender,
-        0x0096fa,
-        false
+        0x0096fa
     );
 
     return { content: fixedLink, embeds: embed.embeds };

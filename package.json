@@ -1,6 +1,6 @@
 {
     "name": "starboard-with-custom-embeds",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "description": "starboard with custom embeds",
     "type": "module",
     "main": "app.js",

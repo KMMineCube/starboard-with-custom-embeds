@@ -33,11 +33,13 @@ function genericCustomEmbed(
     imageLink: string | null,
     sender: User,
     color: number | HexColorString,
-    addPageButtons: boolean,
     pageNumber: number = 1,
     maxPageNumber: number = 1,
     linkPostInfo: string | null = null
 ): BaseMessageOptions {
+
+    const multiPageEmbed = maxPageNumber > 1;
+
     const embed = new EmbedBuilder()
         .setTitle(title)
         .setDescription(description)
@@ -62,8 +64,8 @@ function genericCustomEmbed(
         ])
         .setFooter({
             text:
-                `HootBot v1.0.0` +
-                (addPageButtons ? ` | Page ${pageNumber} of ${maxPageNumber}` : ``)
+                `HootBot v3.0.0` +
+                (multiPageEmbed ? ` | Page ${pageNumber} of ${maxPageNumber}` : ``)
         })
         .setColor(color);
 
@@ -83,7 +85,7 @@ function genericCustomEmbed(
     }
 
     const buttons = new ActionRowBuilder<ButtonBuilder>();
-    if (addPageButtons) {
+    if (multiPageEmbed) {
         buttons
             .addComponents(
                 new ButtonBuilder()
@@ -132,7 +134,7 @@ function starboardEmbedFromUser(message: Message | PartialMessage): BaseMessageO
             iconURL: message.author?.avatarURL() ?? undefined
         })
         .setFooter({
-            text: `HootBot v1.0.0`
+            text: `HootBot v3.0.0`
         })
         .setColor(Colors.Yellow);
 

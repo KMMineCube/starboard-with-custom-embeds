@@ -56,7 +56,6 @@ async function composeInstagramEmbed(
         mediaLink,
         sender,
         0xe4405f,
-        numImages > 1,
         pageNumber,
         numImages,
         postInfo
