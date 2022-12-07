@@ -6,7 +6,6 @@ async function composeTwitterEmbed(
     twitterLink: string,
     message: string,
     sender: User,
-    pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
     // replace twitter links with <link>
     const newContent = message.replace(new RegExp(twitterLink + '\\S*', 'g'), '*<link>*');
@@ -31,12 +30,12 @@ async function searchForTwitterLink(message: Message | string): Promise<string[]
 
     // search for link and get the link with the character preceding it, if it exists
     const userLinks =
-    [
-        ...content.matchAll(
-            /(?<=\s|^)https:\/\/(?:mobile.)?twitter\.com(\/.+\/status\/\S+)/g
+        [
+            ...content.matchAll(
+                /(?<=\s|^)https:\/\/(?:mobile.)?twitter\.com(\/.+\/status\/\S+)/g
             )
         ].map((match) => match[0]) ?? new Array<string>();
-    
+
     // check if the link is wrapped by <>
 
     userLinks.filter((link) => !(link.startsWith('<') && link.endsWith('>')));

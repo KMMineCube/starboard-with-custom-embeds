@@ -66,8 +66,13 @@ async function composeRedditEmbed(
         imageLink = mediaData.media.oembed.thumbnail_url;
     }
 
+    // if no media to embed is found, return undefined
+    if (imageLink === null) {
+        return undefined;
+    }
+
     //replace &amp; with & in image link
-    const imageLinkFixed = imageLink?.replace(/&amp;/g, '&') ?? null;
+    const imageLinkFixed = imageLink.replace(/&amp;/g, '&') ?? null;
 
     // get reddit post title
     const embed = generic_custom_embed(
@@ -95,8 +100,7 @@ async function searchForRedditLink(message: Message | string): Promise<string[]>
     const userLinks = [
         ...content.matchAll(
             /(?<=\s|^)https?:\/\/(www\.)?reddit\.com\/r\/\w+\/comments\/\w+\/\w+[^\s]/g
-        ),
-        ...content.matchAll(/(?<=\s|^)https?:\/\/(www\.)?redd\.it\/\w+\/?/g)
+        )
     ].map((match) => match[0]);
 
     if (!userLinks) return [];

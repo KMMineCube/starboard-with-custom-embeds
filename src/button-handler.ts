@@ -55,16 +55,18 @@ async function shiftPage(
     if (embed === undefined) {
         return;
     }
-    
+
     const [link, type] = await getSourceLinkFromHootBotEmbed(embed);
     if (link === null) {
         return;
     }
     await interaction.update({
-        embeds: [{
-            title: 'Loading...',
-            color: embed.color ?? 0x000000
-        }]
+        embeds: [
+            {
+                title: 'Loading...',
+                color: embed.color ?? 0x000000
+            }
+        ]
     });
 
     const senderId = getSenderIdFromHootBotEmbed(embed);
