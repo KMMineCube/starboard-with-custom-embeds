@@ -9,13 +9,13 @@ async function composePixivEmbed(
     pageNumber: number = 1
 ): Promise<BaseMessageOptions | undefined> {
     // replace pixiv links with fxpixiv links
-    const newContent = message.replace(new RegExp(pixivLink + '\\S*', 'g'), '*<link>*');
+    //const newContent = message.replace(new RegExp(pixivLink + '\\S*', 'g'), '*<link>*');
 
     const fixedLink = pixivLink.replace('pixiv', 'fxpixiv');
 
     const embed = genericCustomEmbed(
         'Pixiv',
-        newContent,
+        message,
         fixedLink,
         null,
         sender,

@@ -29,7 +29,7 @@ async function composeRedditEmbed(
     const mediaData = jsonDataArray[0].data.children[0].data;
 
     // replace any instance of `userLink` and non-whitespace trailing characters with text 'link'
-    const newContent = message.replace(new RegExp(redditLink + '\\S*', 'g'), '*<link>*');
+    // const newContent = message.replace(new RegExp(redditLink + '\\S*', 'g'), '*<link>*');
 
     // get number of images in post
     const numImages = mediaData.gallery_data?.items.length ?? 1;
@@ -80,7 +80,7 @@ async function composeRedditEmbed(
         `\n💬 **${mediaData.num_comments}**`
     ).substring(0, 2048);
 
-    const title = (mediaData.title + ` - posted by **u/${mediaData.author}*`).substring(
+    const title = (mediaData.title + ` - posted by **u/${mediaData.author}**`).substring(
         0,
         256
     );
@@ -88,7 +88,7 @@ async function composeRedditEmbed(
     // get reddit post title
     const embed = genericCustomEmbed(
         title ?? 'Reddit',
-        newContent,
+        message,
         redditLink,
         imageLinkFixed,
         sender,

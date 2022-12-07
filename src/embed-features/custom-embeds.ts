@@ -117,7 +117,7 @@ function genericCustomEmbed(
 
 function starboardEmbedFromUser(message: Message | PartialMessage): BaseMessageOptions {
     const embed = new EmbedBuilder()
-        .setDescription(message.content === '' ? '`no message`' : message.content)
+        .setDescription(message.content ?? null)
         .setFields([
             {
                 name: 'Channel',

@@ -31,13 +31,13 @@ async function composeInstagramEmbed(
     if (!mediaLink) return;
 
     // replace any instance of `userLink` and non-whitespace trailing characters with text 'link'
-    const newContent = message.replace(
-        new RegExp(instagramLink + '\\S*', 'g'),
-        '*<link>*'
-    );
+    // const newContent = message.replace(
+    //     new RegExp(instagramLink + '\\S*', 'g'),
+    //     '*<link>*'
+    // );
 
     const description = (
-        newContent +
+        message +
         '\n\n' +
         '\n__**Post Caption**__: ' +
         jsonDataArray.edge_media_to_caption.edges[0].node.text
