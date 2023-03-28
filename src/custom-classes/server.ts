@@ -4,13 +4,15 @@ import {
     TextChannel,
     MessageReaction,
     PartialMessageReaction,
-    Snowflake
+    Snowflake,
+    User
 } from 'discord.js';
 import { ChannelStuff, ChannelStuffBackup } from './channel.js';
 import { ChannelId } from '../utilities.js';
 import { starboardEmbed } from '../embed-features/custom-embeds.js';
 import { appendNewStarboardMessageId, backupServerSettings } from '../backups.js';
 import { client, starboardMessages } from '../global-stuff.js';
+import { ReactionAddLogEmbed, ReactionRemoveLogEmbed } from '../embed-features/log-embeds.js';
 
 class GuildStuff {
     public readonly guild: Guild;
@@ -18,6 +20,8 @@ class GuildStuff {
     private _defaultStarThreshold: number;
     private _starboardChannel: TextChannel | null = null;
     private _customSettingsChannels: Collection<ChannelId, ChannelStuff>;
+    private _reactionLoggingChannel: TextChannel | null = null;
+    private _reactionLogMode: number = 0b0;
 
     get defaultStarEmoji(): string {
         return this._defaultStarEmoji;
@@ -35,18 +39,30 @@ class GuildStuff {
         return this._customSettingsChannels;
     }
 
+    get reactionLoggingChannel(): TextChannel | null {
+        return this._reactionLoggingChannel;
+    }
+
+    get reactionLogMode(): number {
+        return this._reactionLogMode;
+    }
+
     constructor(
         guild: Guild,
         defaultStarEmoji: string,
         defaultStarThreshold: number,
         starboardChannel: TextChannel | null,
-        customSettingsChannels: Collection<ChannelId, ChannelStuff>
+        customSettingsChannels: Collection<ChannelId, ChannelStuff>,
+        reactionLoggingChannel: TextChannel | null,
+        reactionLogMode: number = 0b11 // 0b01 = log reaction add, 0b10 = log reaction remove
     ) {
         this.guild = guild;
         this._defaultStarEmoji = defaultStarEmoji;
         this._defaultStarThreshold = defaultStarThreshold;
         this._starboardChannel = starboardChannel;
         this._customSettingsChannels = customSettingsChannels;
+        this._reactionLoggingChannel = reactionLoggingChannel;
+        this._reactionLogMode = reactionLogMode;
     }
 
     public setStarboardChannel(channel: TextChannel | null): void {
@@ -61,6 +77,31 @@ class GuildStuff {
 
     public setDefaultStarThreshold(threshold: number): void {
         this._defaultStarThreshold = threshold;
+        backupServerSettings(this.guild.id);
+    }
+
+    public setReactionLoggingChannel(channel: TextChannel | null): void {
+        this._reactionLoggingChannel = channel;
+        backupServerSettings(this.guild.id);
+    }
+
+    public enableReactionAddLogging(): void {
+        this._reactionLogMode |= 0b01;
+        backupServerSettings(this.guild.id);
+    }
+
+    public disableReactionAddLogging(): void {
+        this._reactionLogMode &= 0b10;
+        backupServerSettings(this.guild.id);
+    }
+
+    public enableReactionRemoveLogging(): void {
+        this._reactionLogMode |= 0b10;
+        backupServerSettings(this.guild.id);
+    }
+
+    public disableReactionRemoveLogging(): void {
+        this._reactionLogMode &= 0b01;
         backupServerSettings(this.guild.id);
     }
 
@@ -82,7 +123,24 @@ class GuildStuff {
         backupServerSettings(this.guild.id);
     }
 
-    public handleReaction(reaction: MessageReaction | PartialMessageReaction): boolean {
+    public async logReactionAdd(reaction: MessageReaction, reactor: User): Promise<void> {
+        if (this._reactionLoggingChannel) {
+            this._reactionLoggingChannel.send(
+                ReactionAddLogEmbed(reaction, reactor)
+            );
+        }
+    }
+
+    public async logReactionRemove(reaction: MessageReaction, reactor: User): Promise<void> {
+        if (this._reactionLoggingChannel) {
+            this._reactionLoggingChannel.send(
+                ReactionRemoveLogEmbed(reaction, reactor)
+            );
+        }
+    }
+
+
+    public handleReactionForStarBoard(reaction: MessageReaction | PartialMessageReaction): boolean {
         // if message is in starboard channel, ignore
         if (reaction.message.channel.id === this._starboardChannel?.id) {
             return false;
@@ -158,12 +216,18 @@ class GuildStuff {
             }
         });
 
+        const reactionLoggingChannel = obj.reactionLoggingChannelId ?
+            (guild.channels.cache.get(obj.reactionLoggingChannelId) as TextChannel) :
+            null;
+
         return new GuildStuff(
             guild,
             obj.defaultStarEmoji,
             obj.defaultStarThreshold,
             starboardChannel,
-            customSettingsChannels
+            customSettingsChannels,
+            reactionLoggingChannel,
+            obj.reactionLogMode
         );
     }
 
@@ -175,7 +239,9 @@ class GuildStuff {
             starboardChannelId: this._starboardChannel?.id ?? null,
             customSettingsChannels: this._customSettingsChannels.map((value) =>
                 value.toJSON()
-            )
+            ),
+            reactionLoggingChannelId: this._reactionLoggingChannel?.id ?? null,
+            reactionLogMode: this._reactionLogMode
         };
     }
 }
@@ -185,7 +251,9 @@ type GuildStuffBackup = {
     defaultStarEmoji: string;
     defaultStarThreshold: number;
     starboardChannelId: Snowflake | null;
-    customSettingsChannels: ChannelStuffBackup[];
+    customSettingsChannels: ChannelStuffBackup[],
+    reactionLoggingChannelId: Snowflake | null,
+    reactionLogMode: number
 };
 
 export { GuildStuff, GuildStuffBackup };

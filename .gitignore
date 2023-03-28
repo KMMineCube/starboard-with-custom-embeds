@@ -1,6 +1,5 @@
 node_modules/
-bot_creds.json
-old_bot_creds.json
+*bot_creds*
 dist/
 backups/*.json
 backups/*_lib_msg.txt

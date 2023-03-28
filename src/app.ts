@@ -25,7 +25,7 @@ client.on(Events.ClientReady, async () => {
         }
         allServerData.set(
             guild.id,
-            new GuildStuff(guild, '⭐', 3, null, new Collection())
+            new GuildStuff(guild, '⭐', 3, null, new Collection(), null)
         );
     });
 
@@ -57,7 +57,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 client.on(Events.GuildCreate, (guild) => {
-    allServerData.set(guild.id, new GuildStuff(guild, '⭐', 3, null, new Collection()));
+    allServerData.set(guild.id, new GuildStuff(guild, '⭐', 3, null, new Collection(), null));
 });
 
 client.on(Events.GuildDelete, (guild) => {
@@ -75,6 +75,8 @@ client.on(Events.GuildEmojiDelete, (emoji) => {
 });
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
+
+    // if reaction is partial fetch it
     if (reaction.partial) {
         const fullReaction = await reaction.fetch().catch((err) => {
             console.error('Something went wrong when fetching the message: ', err);
@@ -84,6 +86,18 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
             return;
         }
         reaction = fullReaction;
+    }
+
+    // if user is partial fetch it
+    if (user.partial) {
+        const fullUser = await user.fetch().catch((err) => {
+            console.error('Something went wrong when fetching the message: ', err);
+            return undefined;
+        });
+        if (!fullUser) {
+            return;
+        }
+        user = fullUser;
     }
 
     // check if messages is already in the starboard
@@ -104,7 +118,44 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
     if (server === undefined) {
         return;
     }
-    server.handleReaction(reaction);
+    server.handleReactionForStarBoard(reaction);
+    if (server.reactionLogMode % 0b10 === 1) {
+        await server.logReactionAdd(reaction, user);
+    }
+});
+
+client.on(Events.MessageReactionRemove, async (reaction, user) => {
+    // if reaction is partial fetch it
+    if (reaction.partial) {
+        const fullReaction = await reaction.fetch().catch((err) => {
+            console.error('Something went wrong when fetching the message: ', err);
+            return undefined;
+        });
+        if (!fullReaction) {
+            return;
+        }
+        reaction = fullReaction;
+    }
+
+    // if user is partial fetch it
+    if (user.partial) {
+        const fullUser = await user.fetch().catch((err) => {
+            console.error('Something went wrong when fetching the message: ', err);
+            return undefined;
+        });
+        if (!fullUser) {
+            return;
+        }
+        user = fullUser;
+    }
+    
+    const server = allServerData.get(reaction.message.guildId ?? '');
+    if (server === undefined) {
+        return;
+    }
+    if (server.reactionLogMode >> 1 === 1) {
+        await server.logReactionRemove(reaction, user);
+    }
 });
 
 client

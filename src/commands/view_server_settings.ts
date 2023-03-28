@@ -59,6 +59,18 @@ export default {
                     \nEnabled: ${override.enabled}`
             });
         });
+
+        // reaction logging
+        const reactionLoggingChannel = server.reactionLoggingChannel;
+        if (reactionLoggingChannel) {
+            embed.addFields({
+                name: 'Reaction Logging',
+                value:
+                    `Add Enabled: ${server.reactionLogMode % 0b10}` +
+                    `\nRemove Enabled: ${server.reactionLogMode % 0b01}` +
+                    `\nChannel: ${reactionLoggingChannel.toString()}`
+            });
+        }
         await interaction.reply({ embeds: [embed] });
     }
 } as commandData;
