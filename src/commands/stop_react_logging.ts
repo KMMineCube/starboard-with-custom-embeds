@@ -1,6 +1,12 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, PermissionsBitField, ChannelType, TextChannel } from "discord.js";
-import { allServerData } from "../global-stuff.js";
-
+import {
+    SlashCommandBuilder,
+    ChatInputCommandInteraction,
+    GuildMember,
+    PermissionsBitField,
+    ChannelType,
+    TextChannel
+} from 'discord.js';
+import { allServerData } from '../global-stuff.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -33,4 +39,4 @@ export default {
             await interaction.reply('Reaction logging disabled.');
         }
     }
-}
+};

@@ -1,6 +1,9 @@
 import { BaseMessageOptions, EmbedBuilder, MessageReaction, User } from 'discord.js';
 
-function ReactionAddLogEmbed(reaction: MessageReaction, reactor: User): BaseMessageOptions {
+function ReactionAddLogEmbed(
+    reaction: MessageReaction,
+    reactor: User
+): BaseMessageOptions {
     const logEmbed = new EmbedBuilder()
         .setTitle(`${reactor.username} reacted with ${reaction.emoji}`)
         .setThumbnail(reactor.avatarURL())
@@ -42,7 +45,10 @@ function ReactionAddLogEmbed(reaction: MessageReaction, reactor: User): BaseMess
     };
 }
 
-function ReactionRemoveLogEmbed(reaction: MessageReaction, reactor: User): BaseMessageOptions {
+function ReactionRemoveLogEmbed(
+    reaction: MessageReaction,
+    reactor: User
+): BaseMessageOptions {
     const logEmbed = new EmbedBuilder()
         .setTitle(`${reactor.username} removed ${reaction.emoji}`)
         .setThumbnail(reactor.avatarURL())

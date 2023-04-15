@@ -12,7 +12,10 @@ import { ChannelId } from '../utilities.js';
 import { starboardEmbed } from '../embed-features/custom-embeds.js';
 import { appendNewStarboardMessageId, backupServerSettings } from '../backups.js';
 import { client, starboardMessages } from '../global-stuff.js';
-import { ReactionAddLogEmbed, ReactionRemoveLogEmbed } from '../embed-features/log-embeds.js';
+import {
+    ReactionAddLogEmbed,
+    ReactionRemoveLogEmbed
+} from '../embed-features/log-embeds.js';
 
 class GuildStuff {
     public readonly guild: Guild;
@@ -125,22 +128,22 @@ class GuildStuff {
 
     public async logReactionAdd(reaction: MessageReaction, reactor: User): Promise<void> {
         if (this._reactionLoggingChannel) {
-            this._reactionLoggingChannel.send(
-                ReactionAddLogEmbed(reaction, reactor)
-            );
+            this._reactionLoggingChannel.send(ReactionAddLogEmbed(reaction, reactor));
         }
     }
 
-    public async logReactionRemove(reaction: MessageReaction, reactor: User): Promise<void> {
+    public async logReactionRemove(
+        reaction: MessageReaction,
+        reactor: User
+    ): Promise<void> {
         if (this._reactionLoggingChannel) {
-            this._reactionLoggingChannel.send(
-                ReactionRemoveLogEmbed(reaction, reactor)
-            );
+            this._reactionLoggingChannel.send(ReactionRemoveLogEmbed(reaction, reactor));
         }
     }
 
-
-    public handleReactionForStarBoard(reaction: MessageReaction | PartialMessageReaction): boolean {
+    public handleReactionForStarBoard(
+        reaction: MessageReaction | PartialMessageReaction
+    ): boolean {
         // if message is in starboard channel, ignore
         if (reaction.message.channel.id === this._starboardChannel?.id) {
             return false;
@@ -216,9 +219,9 @@ class GuildStuff {
             }
         });
 
-        const reactionLoggingChannel = obj.reactionLoggingChannelId ?
-            (guild.channels.cache.get(obj.reactionLoggingChannelId) as TextChannel) :
-            null;
+        const reactionLoggingChannel = obj.reactionLoggingChannelId
+            ? (guild.channels.cache.get(obj.reactionLoggingChannelId) as TextChannel)
+            : null;
 
         return new GuildStuff(
             guild,
@@ -251,9 +254,9 @@ type GuildStuffBackup = {
     defaultStarEmoji: string;
     defaultStarThreshold: number;
     starboardChannelId: Snowflake | null;
-    customSettingsChannels: ChannelStuffBackup[],
-    reactionLoggingChannelId: Snowflake | null,
-    reactionLogMode: number
+    customSettingsChannels: ChannelStuffBackup[];
+    reactionLoggingChannelId: Snowflake | null;
+    reactionLogMode: number;
 };
 
 export { GuildStuff, GuildStuffBackup };

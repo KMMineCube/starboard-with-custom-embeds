@@ -13,14 +13,7 @@ async function composePixivEmbed(
 
     const fixedLink = pixivLink.replace('pixiv', 'fxpixiv');
 
-    const embed = genericCustomEmbed(
-        'Pixiv',
-        message,
-        fixedLink,
-        null,
-        sender,
-        0x0096fa
-    );
+    const embed = genericCustomEmbed('Pixiv', message, fixedLink, null, sender, 0x0096fa);
 
     return { content: fixedLink, embeds: embed.embeds };
 }

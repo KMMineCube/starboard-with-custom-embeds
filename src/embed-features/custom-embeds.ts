@@ -37,7 +37,6 @@ function genericCustomEmbed(
     maxPageNumber: number = 1,
     linkPostInfo: string | null = null
 ): BaseMessageOptions {
-
     const multiPageEmbed = maxPageNumber > 1;
 
     const embed = new EmbedBuilder()

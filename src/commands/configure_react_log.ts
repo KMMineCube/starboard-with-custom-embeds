@@ -1,6 +1,10 @@
-import { ChatInputCommandInteraction, GuildMember, PermissionsBitField, SlashCommandBuilder } from "discord.js";
-import { allServerData } from "../global-stuff.js";
-
+import {
+    ChatInputCommandInteraction,
+    GuildMember,
+    PermissionsBitField,
+    SlashCommandBuilder
+} from 'discord.js';
+import { allServerData } from '../global-stuff.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -14,7 +18,8 @@ export default {
                     option
                         .setName('log_reactions')
                         .setDescription('Log reactions to the reaction log channel.')
-                        .setRequired(true))
+                        .setRequired(true)
+                )
         )
         .addSubcommand((subcommand) =>
             subcommand
@@ -24,7 +29,8 @@ export default {
                     option
                         .setName('log_reactions')
                         .setDescription('Log reactions to the reaction log channel.')
-                        .setRequired(true))
+                        .setRequired(true)
+                )
         ),
 
     async execute(interaction: ChatInputCommandInteraction) {
@@ -68,5 +74,4 @@ export default {
             }
         }
     }
-
-}
+};

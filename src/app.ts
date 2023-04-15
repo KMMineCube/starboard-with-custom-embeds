@@ -57,7 +57,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 client.on(Events.GuildCreate, (guild) => {
-    allServerData.set(guild.id, new GuildStuff(guild, '⭐', 3, null, new Collection(), null));
+    allServerData.set(
+        guild.id,
+        new GuildStuff(guild, '⭐', 3, null, new Collection(), null)
+    );
 });
 
 client.on(Events.GuildDelete, (guild) => {
@@ -75,7 +78,6 @@ client.on(Events.GuildEmojiDelete, (emoji) => {
 });
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
-
     // if reaction is partial fetch it
     if (reaction.partial) {
         const fullReaction = await reaction.fetch().catch((err) => {
@@ -148,7 +150,7 @@ client.on(Events.MessageReactionRemove, async (reaction, user) => {
         }
         user = fullUser;
     }
-    
+
     const server = allServerData.get(reaction.message.guildId ?? '');
     if (server === undefined) {
         return;

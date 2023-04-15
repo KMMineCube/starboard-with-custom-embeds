@@ -1,6 +1,12 @@
-import { SlashCommandBuilder, ChannelType, ChatInputCommandInteraction, GuildMember, PermissionsBitField, TextChannel } from "discord.js";
-import { allServerData } from "../global-stuff.js";
-
+import {
+    SlashCommandBuilder,
+    ChannelType,
+    ChatInputCommandInteraction,
+    GuildMember,
+    PermissionsBitField,
+    TextChannel
+} from 'discord.js';
+import { allServerData } from '../global-stuff.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -43,4 +49,4 @@ export default {
             await interaction.reply('Error: Channel provided is not a text channel.');
         }
     }
-}
+};
