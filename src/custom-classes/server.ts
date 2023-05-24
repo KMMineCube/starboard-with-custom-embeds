@@ -5,7 +5,8 @@ import {
     MessageReaction,
     PartialMessageReaction,
     Snowflake,
-    User
+    User,
+    Message
 } from 'discord.js';
 import { ChannelStuff, ChannelStuffBackup } from './channel.js';
 import { ChannelId } from '../utilities.js';
@@ -189,6 +190,25 @@ class GuildStuff {
                 starboardMessages.set(this.guild.id, [reaction.message.id]);
             }
             appendNewStarboardMessageId(this.guild.id, reaction.message.id);
+            return true;
+        }
+        return false;
+    }
+
+    public forceMessageToStarboard(message: Message): boolean {
+        if (this._starboardChannel) {
+            this._starboardChannel.send(starboardEmbed(message));
+            const oldList = starboardMessages.get(this.guild.id);
+
+            // append the new message to the front of the list
+
+            if (oldList) {
+                oldList.unshift(message.id);
+                starboardMessages.set(this.guild.id, oldList);
+            } else {
+                starboardMessages.set(this.guild.id, [message.id]);
+            }
+            appendNewStarboardMessageId(this.guild.id, message.id);
             return true;
         }
         return false;
