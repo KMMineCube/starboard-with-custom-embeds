@@ -10,7 +10,7 @@ async function composeTwitterEmbed(
     // replace twitter links with <link>
     //const newContent = message.replace(new RegExp(twitterLink + '\\S*', 'g'), '*<link>*');
 
-    const fixedLink = twitterLink.replace('twitter', 'fxtwitter');
+    const fixedLink = twitterLink.replace('twitter', 'vxtwitter');
 
     const embed = genericCustomEmbed(
         'Twitter',
